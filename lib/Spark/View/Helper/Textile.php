@@ -5,9 +5,12 @@ class Spark_View_Helper_Textile extends Zend_View_Helper_Abstract
   
   protected $_textile;
   
-  public function textile($text=null)
+  public function textile($text = null)
   {
-    return $this;  
+    if(!is_null($text)) {
+      return $this->parse($text);
+    }
+    return $this;
   }
   
   public function parse($text)
