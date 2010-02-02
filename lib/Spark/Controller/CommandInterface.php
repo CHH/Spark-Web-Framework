@@ -1,6 +1,6 @@
 <?php
 
-interface Spark_Controller_CommandInterface extends Spark_CommandInterface
+interface Spark_Controller_CommandInterface
 {
   public function execute(
     Spark_Controller_RequestInterface $request,

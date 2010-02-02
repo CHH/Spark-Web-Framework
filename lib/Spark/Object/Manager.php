@@ -46,7 +46,7 @@ class Spark_Object_Manager
     if(!$className) {
       throw new BadMethodCallException("The first argument must contain the classname, NULL given");
     }
-
+    
     $class = new ReflectionClass($className);
 
     if($class->implementsInterface("Spark_UnifiedConstructorInterface")) {
@@ -59,7 +59,11 @@ class Spark_Object_Manager
       return $class->newInstance($options);
     }
     
-    return $class->newInstanceArgs($args);
+    if(sizeof($args) > 0) {
+      return $class->newInstanceArgs($args);
+    }
+    
+    return $class->newInstance();
   }
   
   static public function addBinding(Spark_Object_OptionBinding $binding)
