@@ -12,7 +12,7 @@ class Spark_Registry
   
   static public function get($key)
   {
-    if(self::has($key) {
+    if(self::has($key)) {
       return self::$_registry[$key];
     }
     return null;

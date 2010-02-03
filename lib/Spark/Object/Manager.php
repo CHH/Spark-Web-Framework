@@ -5,6 +5,7 @@ class Spark_Object_Manager
   
   static protected $_bindings = array();
   static protected $_singletons = array();
+  static protected $_config;
   
   /**
    * createInstance() - creates a new Instance of the class on every call
@@ -50,10 +51,14 @@ class Spark_Object_Manager
     $class = new ReflectionClass($className);
 
     if($class->implementsInterface("Spark_UnifiedConstructorInterface")) {
-      if(is_array($args[1])) {
+      if(isset($args[1]) and is_array($args[1])) {
         $options = $args[1];
       } elseif(self::hasBinding($className)) {
         $options = self::getBinding($className)->getOptions();
+      } elseif(isset(self::$_config[$className])) {
+        $options = self::$_config[$className];
+      } else {
+        $options = null;
       }
 
       return $class->newInstance($options);
@@ -64,6 +69,30 @@ class Spark_Object_Manager
     }
     
     return $class->newInstance();
+  }
+  
+  static public function getConfig()
+  {
+    return self::$_config;
+  }
+  
+  /**
+   * setConfig() - Sets a config array/object.
+   * On Instantiation the classname is looked up in this config and the value
+   * for the classname is used as options for the class
+   * 
+   * @param mixed $config
+   */
+  static public function setConfig($config)
+  {
+    if($config instanceof Zend_Config) {
+      self::$_config = $config->toArray();
+    } elseif(is_array($config)) {
+      self::$_config = $config;
+    } else {
+      throw new InvalidArgumentException("Config must be an Instance of 
+       Zend_Config or an Array");
+    }
   }
   
   static public function addBinding(Spark_Object_OptionBinding $binding)
