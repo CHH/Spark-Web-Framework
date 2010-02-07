@@ -29,7 +29,6 @@ class Spark_Controller_CommandResolver
   
   public function getCommand(Spark_Controller_RequestInterface $request)
   { 
-  
     $commandName = ucfirst($request->getCommandName());
     
     if(!is_null($request->getModuleName())) {
@@ -38,13 +37,15 @@ class Spark_Controller_CommandResolver
     
     if(!is_null($commandName)) {
       $command = $this->_loadCommand($commandName);
-      
-      if($command instanceof Spark_Controller_CommandInterface) {
-        return $command;
-      }
+      return $command;
     }
     
     return $this->_loadCommand($this->getDefaultCommandName());
+  }
+  
+  public function getCommandByName($commandName)
+  {
+    return $this->_loadCommand($commandName);
   }
   
   protected function _loadCommand($commandName)
@@ -65,6 +66,10 @@ class Spark_Controller_CommandResolver
     }
     
     $command = new $className;
+    
+    if(!($command instanceof Spark_Controller_CommandInterface)) {
+      return false;
+    }
     return $command;
   }
   

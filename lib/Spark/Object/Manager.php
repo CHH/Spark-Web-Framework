@@ -8,12 +8,12 @@ class Spark_Object_Manager
   static protected $_config;
   
   /**
-   * createInstance() - creates a new Instance of the class on every call
+   * create() - creates a new Instance of the class on every call
    *
    * @param string $className
    * @return object
    */
-  static public function createInstance()
+  static public function create()
   {
     $args = func_get_args();
     $className = $args[0];
@@ -23,13 +23,13 @@ class Spark_Object_Manager
   }
   
   /**
-   * getInstance() - Returns a shared Instance of a Class, 
+   * get() - Returns a shared Instance of a Class, 
    *  instantiates a new Object only on first call
    *
    * @param string $className
    * @return object
    */
-  static public function getInstance()
+  static public function get()
   {
     $args = func_get_args();
     $className = $args[0];
@@ -51,7 +51,7 @@ class Spark_Object_Manager
     $class = new ReflectionClass($className);
 
     if($class->implementsInterface("Spark_UnifiedConstructorInterface")) {
-      if(isset($args[1]) and is_array($args[1])) {
+      if(isset($args[1]) and (is_array($args[1]) or $args[1] instanceof Zend_Config)) {
         $options = $args[1];
       } elseif(self::hasBinding($className)) {
         $options = self::getBinding($className)->getOptions();

@@ -11,8 +11,21 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   
   protected $_router = null;
   
+  protected $_preFilters;
+  protected $_postFilters;
+  
+  private $_filterClass = "Spark_Controller_FilterInterface";
+  
+  private $_errorCommandName = "Error";
+  
   public function __construct($options = null)
   {
+    $this->_preFilters = new Spark_FilterChain;
+    $this->_postFilters = new Spark_FilterChain;
+    
+    $this->_preFilters->accept($this->_filterClass);
+    $this->_postFilters->accept($this->_filterClass);
+    
     if(!is_null($options)) {
       $this->setOptions($options);
     }
@@ -26,22 +39,46 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   
   public function handleRequest()
   {
-    $request = $this->getRouter()->route($this->getRequest());
+    $request = $this->getRequest();
     $response = $this->getResponse();
+    
+    $this->_preFilters->process($request, $response);
+    
+    $this->getRouter()->route($request);
     
     $command = $this->getResolver()->getCommand($request);
     
     if($command) {
       $command->execute($request, $response);
+      
+    } else {
+      // Call the Error Command
+      $this->getResolver()->getCommandByName($this->_errorCommandName)
+           ->execute($request, $response);
     }
     
+    $this->_postFilters->process($request, $response);
+    
     $response->sendResponse();
+  }
+  
+  
+  public function addPreFilter(Spark_Controller_FilterInterface $filter)
+  {
+    $this->_preFilters->add($filter);
+    return $this;
+  }
+
+  public function addPostFilter(Spark_Controller_FilterInterface $filter)
+  {
+    $this->_postFilters->add($filter);
+    return $this;
   }
   
   public function getRequest()
   {
     if(is_null($this->_request)) {
-      $this->_request = Spark_Object_Manager::createInstance("Spark_Controller_HttpRequest");
+      $this->_request = Spark_Object_Manager::create("Spark_Controller_HttpRequest");
     }
     return $this->_request;
   }
@@ -55,7 +92,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   public function getResponse()
   {
     if(is_null($this->_response)) {
-      $this->_response = Spark_Object_Manager::createInstance("Spark_Controller_HttpResponse");
+      $this->_response = Spark_Object_Manager::create("Spark_Controller_HttpResponse");
     }
     return $this->_response;
   }
@@ -69,7 +106,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   public function getResolver()
   {
     if(is_null($this->_resolver)) {
-      $this->_resolver = Spark_Object_Manager::createInstance("Spark_Controller_CommandResolver");
+      $this->_resolver = Spark_Object_Manager::create("Spark_Controller_CommandResolver");
     }
     return $this->_resolver;
   }
@@ -83,13 +120,19 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   public function getRouter()
   {
     if(is_null($this->_router)) {
-      $this->_router = Spark_Object_Manager::createInstance("Zend_Controller_Router_Rewrite");
+      $this->_router = Spark_Object_Manager::create("Zend_Controller_Router_Rewrite");
     }
     return $this->_router;
   }
   
   public function setRouter(Zend_Controller_Router_Interface $router) {
     $this->_router = $router;
+    return $this;
+  }
+  
+  public function setFilterClass($filterClass)
+  {
+    $this->_filterClass = $filterClass;
     return $this;
   }
 }

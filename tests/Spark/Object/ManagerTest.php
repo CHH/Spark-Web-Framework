@@ -5,7 +5,7 @@ class Spark_Object_ManagerTest extends PHPUnit_Framework_Testcase
   
   public function testInstantiationWithoutOptions()
   {
-    $sampleObject = Spark_Object_Manager::createInstance("SampleObject");
+    $sampleObject = Spark_Object_Manager::create("SampleObject");
     
     $this->assertTrue($sampleObject instanceof SampleObject);
     $this->assertTrue(is_object($sampleObject));
@@ -13,8 +13,8 @@ class Spark_Object_ManagerTest extends PHPUnit_Framework_Testcase
   
   public function testSingletonInstantiation()
   {
-    $id1 = spl_object_hash(Spark_Object_Manager::getInstance("SampleObject"));
-    $id2 = spl_object_hash(Spark_Object_Manager::getInstance("SampleObject"));
+    $id1 = spl_object_hash(Spark_Object_Manager::get("SampleObject"));
+    $id2 = spl_object_hash(Spark_Object_Manager::get("SampleObject"));
     
     $this->assertEquals($id1, $id2);
   }
@@ -26,7 +26,7 @@ class Spark_Object_ManagerTest extends PHPUnit_Framework_Testcase
                  "foo_bar_baz" => "fooBarBaz"
                );
     
-    $sampleObject = Spark_Object_Manager::createInstance("SampleObject", $options);
+    $sampleObject = Spark_Object_Manager::create("SampleObject", $options);
     
     $this->assertTrue($sampleObject instanceof SampleObject);
     $this->assertEquals("fooBar", $sampleObject->getFooBar());
@@ -47,7 +47,7 @@ class Spark_Object_ManagerTest extends PHPUnit_Framework_Testcase
     $this->assertTrue(Spark_Object_Manager::hasBinding("SampleObject"));
     $this->assertNotNull(Spark_Object_Manager::getBinding("SampleObject"));
     
-    $sampleObject = Spark_Object_Manager::createInstance("SampleObject");
+    $sampleObject = Spark_Object_Manager::create("SampleObject");
     
     $this->assertTrue($sampleObject instanceof SampleObject);
     
