@@ -7,17 +7,18 @@
  *
  * @category   Spark
  * @package    Spark
- * @copyright  Copyright (c) 2009 Christoph Hochstrasser
+ * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license http://www.opensource.org/licenses/mit-license.php
  */
 
 /**
  * @category   Spark
  * @package    Spark
- * @copyright  Copyright (c) 2009 Christoph Hochstrasser
+ * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license http://www.opensource.org/licenses/mit-license.php
  */
-class Spark_FilterChain implements Spark_FilterChainInterface
+class Spark_FilterChain 
+  implements Spark_FilterChainInterface, Spark_UnifiedConstructorInterface
 {
   
   /**
@@ -29,6 +30,27 @@ class Spark_FilterChain implements Spark_FilterChainInterface
    * @var array
    */
   protected $_filters = array();
+
+  public function __construct($options = null)
+  {
+    $this->setOptions($options);
+  }
+
+  public function setOptions($options)
+  {
+    Spark_Object_Options::setOptions($this, $options);
+    return $this;
+  }
+
+  public function setFilters(array $filters)
+  { 
+    $this->_filters = array();
+    
+    foreach($filters as $filter) {
+      $this->add($filter);
+    }
+    return $this;
+  }
   
   public function accept($filterClass)
   {

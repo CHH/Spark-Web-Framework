@@ -1,10 +1,37 @@
 <?php
+/**
+ * Spark Framework
+ * 
+ * This source file is subject to the MIT license that is bundled
+ * with this package in the file LICENSE.txt.
+ *
+ * @category   Spark
+ * @package    Spark_Object
+ * @copyright  Copyright (c) 2010 Christoph Hochstrasser
+ * @license http://www.opensource.org/licenses/mit-license.php
+ */
 
+/**
+ * @category   Spark
+ * @package    Spark_Object
+ * @copyright  Copyright (c) 2010 Christoph Hochstrasser
+ * @license http://www.opensource.org/licenses/mit-license.php
+ */
 class Spark_Object_Manager
 {
-  
+  /**
+   * @var array
+   */
   static protected $_bindings = array();
+
+  /**
+   * @var array
+   */
   static protected $_singletons = array();
+
+  /**
+   * @var array
+   */
   static protected $_config;
   
   /**
@@ -41,7 +68,15 @@ class Spark_Object_Manager
     
     return self::$_singletons[$className];
   }
-  
+
+  /**
+   * _instantiateClass() - Does the heavy lifting in object instantiation
+   *
+   * @param string $className
+   * @param array  $args Numerical indexed array, which contains the arguments
+   *                     for the object constructor
+   * @return object
+   */
   static protected function _instantiateClass($className, $args)
   {
     if(!$className) {
@@ -70,7 +105,12 @@ class Spark_Object_Manager
     
     return $class->newInstance();
   }
-  
+
+  /**
+   * getConfig() - Returns the static config array
+   *
+   * @return array
+   */
   static public function getConfig()
   {
     return self::$_config;
@@ -94,12 +134,23 @@ class Spark_Object_Manager
        Zend_Config or an Array");
     }
   }
-  
+
+  /**
+   * addBinding() - Binds a set of options to a class through an OptionBinding Object
+   *
+   * @param Spark_Object_OptionBinding $binding
+   */
   static public function addBinding(Spark_Object_OptionBinding $binding)
   {
     self::$_bindings[$binding->getClass()] = $binding;
   }
-  
+
+  /**
+   * getBinding() - Returns the Option Binding for the given Class
+   *
+   * @param string $class
+   * @return Spark_Object_OptionBinding
+   */
   static public function getBinding($class)
   {
     if(self::hasBinding($class)) {
@@ -107,7 +158,13 @@ class Spark_Object_Manager
     }
     return null;
   }
-  
+
+  /**
+   * hasBinding() - Checks if a Binding for the given Class exists
+   *
+   * @param string class
+   * @return bool
+   */
   static public function hasBinding($class)
   {
     return array_key_exists($class, self::$_bindings) ? true : false;
