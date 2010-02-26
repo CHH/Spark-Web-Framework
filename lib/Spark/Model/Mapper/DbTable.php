@@ -4,28 +4,21 @@ class Spark_Model_Mapper_DbTable extends Spark_Model_Mapper_Abstract
   implements Spark_Model_Mapper_Interface, Spark_Model_SelectableInterface
 {
   
-  protected $_tableGateway = null;
+  protected $_adapter = null;
   
-  protected $_tableName    = null;
+  protected $_selectPrototype = null;
+  
+  protected $_tableName = null;
   
   protected $_idProperty   = "id";
   
-  public function __construct(Zend_Db_Table_Abstract $table = null)
+  static protected $_defaultAdapter = null;
+  
+  public function __construct(Zend_Db_Adapter_Abstract $db = null)
   {
-    if(is_null($table)) {
-      if(is_null($this->_tableName)) {
-        throw new Spark_Model_Exception("You must override the protected 
-         _tableName Property, to supply the name of the table this 
-         mapper maps the data to");
-      }
-      
-      $this->_tableGateway = new Zend_Db_Table($this->_tableName);
-      
-    } else {
-      $this->_tableGateway = $table;
+    if(!is_null($db)) {
+      $this->setDb($db);
     }
-    
-    parent::__construct();
   }
   
   public function find($id)
@@ -36,11 +29,9 @@ class Spark_Model_Mapper_DbTable extends Spark_Model_Mapper_Abstract
     
     $idProperty = $this->_idProperty;
     
-    if($result = $this->_getTableGateway()->find($id)->current()) {
-      $result = $result->toArray();
-    } else {
-      return false;
-    }
+    $select = $this->select()->where("{$idProperty} = ?", $id)
+    
+    $result = $this->getAdapter()->fetchRow($select);
     
     $entity = $this->newEntity($result);
     
@@ -56,7 +47,7 @@ class Spark_Model_Mapper_DbTable extends Spark_Model_Mapper_Abstract
   
   public function findBySelect(Zend_Db_Select $select)
   { 
-    $resultSet = $this->_getTableGateway()->fetchAll($select)->toArray();
+    $resultSet = $this->getAdapter()->fetchAll($select);
     
     $dataSet = $this->mapToEntities($resultSet);
     
@@ -75,15 +66,26 @@ class Spark_Model_Mapper_DbTable extends Spark_Model_Mapper_Abstract
     if(!$entity->$idProperty) {
     
       $this->_preSaveFilters->processFilters($entity);
-      $entity->$idProperty = $this->_getTableGateway()->insert($entity->asSavable());
+      
+      $entity->$idProperty = $this->getAdapter()->insert(
+        $this->getTableName(), 
+        $entity->asSavable()
+      );
+      
       $this->_postSaveFilters->processFilters($entity);
       
     } else {
-      $where = $this->_getTableGateway()->getAdapter()
+      $where = $this->getAdapter()
                     ->quoteInto("{$idProperty} = ?", $entity->$idProperty);
       
       $this->_preUpdateFilters->processFilters($entity);
-      $this->_getTableGateway()->update($entity->asSavable(), $where);
+      
+      $this->getAdapter()->update(
+        $this->getTableName(), 
+        $entity->asSavable(), 
+        $where
+      );
+      
       $this->_postUpdateFilters->processFilters($entity);
     }
     
@@ -98,14 +100,14 @@ class Spark_Model_Mapper_DbTable extends Spark_Model_Mapper_Abstract
     $idProperty = $this->_idProperty;
     
     if($entity instanceof $this->_entityClass) {
-      $where = $this->_getTableGateway()->getAdapter()
+      $where = $this->getAdapter()
                     ->quoteInto("{$idProperty} = ?", $entity->$idProperty);
     } else {
-      $where = $this->_getTableGateway()->getAdapter()
+      $where = $this->getAdapter()
                     ->quoteInto("{$idProperty} = ?", $entity);
     }
     
-    $this->_getTableGateway()->delete($where);
+    $this->getAdapter()->delete($this->getTableName(), $where);
     
     return $entity;
   }
@@ -138,18 +140,62 @@ class Spark_Model_Mapper_DbTable extends Spark_Model_Mapper_Abstract
   
   public function getSelect()
   {
-    return $this->getTableGateway()->select();
+    if(is_null($this->_selectPrototype)) {
+      $this->_selectPrototype = new Zend_Db_Select($this->getDb());
+      $this->_selectPrototype->from($this->getTableName());
+    }
+    return clone $this->_selectPrototype;
   }
   
-  public function getTableGateway()
+  public function select()
   {
-    return $this->_getTableGateway();
+    return $this->getSelect();
   }
   
-  protected function _getTableGateway()
+  public function getAdapter()
   {
-    return $this->_tableGateway;
+    if(is_null($this->_adapter)) {
+      if(is_null(self::$_defaultAdapter)) {
+        throw new Spark_Model_Exception("An instance of a database adapter object is required for
+          Spark_Model_Mapper to work. Please supply one either in the constructor or
+          with the setAdapter() method or set an default Adapter with the static
+          setDefaultAdapter() method.");
+      }
+      $this->_adapter = self::$_defaultAdapter;
+    }
+    
+    return $this->_adapter;
   }
+  
+  public function setAdapter(Zend_Db_Adapter_Abstract $adapter)
+  {
+    $this->_adapter = $adapter;
+    return $this;
+  }
+  
+  static public function setDefaultAdapter(Zend_Db_Adapter_Abstract $adapter)
+  {
+    self::$_defaultAdapter = $adapter;
+  }
+  
+  public function getTableName()
+  {
+    if(is_null($this->_tableName)) {
+      throw new Spark_Model_Exception("The name of the table in the database is
+        required for the Spark_Model_Mapper to work. Please supply the name
+        either via overriding the _tableName property in your specific Mapper class
+        or with the setTableName method.");
+    }
+    
+    return $this->_tableName;
+  }
+  
+  public function setTableName($tableName)
+  {
+    $this->_tableName = $tableName;
+    return $this;
+  }
+  
 }
 
 ?>
