@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2009 Christoph Hochstrasser
  * @license http://www.opensource.org/licenses/mit-license.php
  */
-interface Spark_Model_Filter_Interface extends Spark_FilterInterface
+interface Spark_Model_Filter_Interface
 {
   /**
    * execute() - Method which gets called by the Filter Chain, by Command Pattern

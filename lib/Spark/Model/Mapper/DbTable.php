@@ -19,6 +19,7 @@ class Spark_Model_Mapper_DbTable extends Spark_Model_Mapper_Abstract
     if(!is_null($db)) {
       $this->setDb($db);
     }
+    parent::__construct();
   }
   
   public function find($id)
@@ -29,7 +30,7 @@ class Spark_Model_Mapper_DbTable extends Spark_Model_Mapper_Abstract
     
     $idProperty = $this->_idProperty;
     
-    $select = $this->select()->where("{$idProperty} = ?", $id)
+    $select = $this->select()->where("{$idProperty} = ?", $id);
     
     $result = $this->getAdapter()->fetchRow($select);
     
@@ -141,7 +142,7 @@ class Spark_Model_Mapper_DbTable extends Spark_Model_Mapper_Abstract
   public function getSelect()
   {
     if(is_null($this->_selectPrototype)) {
-      $this->_selectPrototype = new Zend_Db_Select($this->getDb());
+      $this->_selectPrototype = new Zend_Db_Select($this->getAdapter());
       $this->_selectPrototype->from($this->getTableName());
     }
     return clone $this->_selectPrototype;
