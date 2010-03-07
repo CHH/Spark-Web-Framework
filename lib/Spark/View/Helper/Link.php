@@ -16,15 +16,11 @@ class Spark_View_Helper_Link extends Spark_View_Helper_HtmlElement
     return $instance;
   }
   
-  public function to($uri)
+  public function to($url)
   {
-    if(!is_array($uri) and !is_string($url)) {
+    if(!is_string($url)) {
       throw new InvalidArgumentException("You must supply a string or key 
-        value pairs as URL");
-    }
-    
-    if(is_array($url)) {
-      $uri = $this->getView()->url($uri);
+        value pairs as value for the href attribute");
     }
     
     $this->href = $url;
