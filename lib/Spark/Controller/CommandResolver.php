@@ -29,31 +29,39 @@ class Spark_Controller_CommandResolver
   
   public function getCommand(Spark_Controller_RequestInterface $request)
   { 
-    $commandName = ucfirst($request->getCommandName());
     
     if(!is_null($request->getModuleName())) {
-      
-    }
-    
-    if(!is_null($commandName)) {
-      $command = $this->_loadCommand($commandName);
+      $command = $this->_loadCommand($request->getCommandName(), $request->getModuleName());
       return $command;
+      
+    } elseif(!is_null($commandName)) {
+      $command = $this->_loadCommand($request->getCommandName());
+      return $command;
+      
+    } else {
+      return $this->_loadCommand($this->getDefaultCommandName());
     }
-    
-    return $this->_loadCommand($this->getDefaultCommandName());
   }
   
-  public function getCommandByName($commandName)
+  public function getCommandByName($commandName, $moduleName = null)
   {
-    return $this->_loadCommand($commandName);
+    return $this->_loadCommand($commandName, $moduleName);
   }
   
-  protected function _loadCommand($commandName)
+  protected function _loadCommand($commandName, $moduleName = null)
   {
-    $className = $commandName . $this->getCommandSuffix();
+    $className = ucfirst($commandName) . $this->getCommandSuffix();
     
-    $path = $this->getCommandDirectory() . DIRECTORY_SEPARATOR
-            . $className . ".php";
+    if($moduleName) {
+      $path = $this->getModuleDirectory() . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR
+              . $this->getModuleCommandDirectory() . DIRECTORY_SEPARATOR . $className . ".php";
+      
+      $className = ucfirst($moduleName) . "_" . $className;
+      
+    } else {
+      $path = $this->getCommandDirectory() . DIRECTORY_SEPARATOR
+              . $className . ".php";
+    }
     
     if(!file_exists($path)) {
       return false;
