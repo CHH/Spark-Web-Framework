@@ -28,7 +28,7 @@ abstract class Spark_Model_Mapper_Abstract
   {}
   
   public function create($data = null, $ignoreNotExistingProperties = false) {
-    return $this->newEntity($data, $ignoreNotExisting);
+    return $this->newEntity($data, $ignoreNotExistingProperties);
   }
   
   public function newEntity($data = null, $ignoreNotExisting = false) {
