@@ -47,6 +47,7 @@ class Spark_Controller_Filter_ApplyLayout
   public function setLayoutPath($layoutPath)
   {
     $this->_layoutPath = $layoutPath;
+    $this->getLayout()->setScriptPath($layoutPath);
     return $this;
   }
   
