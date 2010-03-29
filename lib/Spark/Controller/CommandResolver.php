@@ -34,7 +34,7 @@ class Spark_Controller_CommandResolver
       $command = $this->_loadCommand($request->getCommandName(), $request->getModuleName());
       return $command;
       
-    } elseif(!is_null($commandName)) {
+    } elseif(!is_null($request->getCommandName())) {
       $command = $this->_loadCommand($request->getCommandName());
       return $command;
       
