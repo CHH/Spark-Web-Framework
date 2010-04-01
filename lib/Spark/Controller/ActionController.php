@@ -7,6 +7,17 @@ class Spark_Controller_ActionController implements Spark_Controller_CommandInter
     Zend_Controller_Response_Abstract $response
   )
   {
+    $action = $request->getAction();
+    
+    if($action == null) {
+      $action = "index";
+    }
+    
+    $methodName = $action . "Action";
+    
+    if(method_exists($this, $methodName)) {
+      $this->$methodName();
+    }
     
   }
 }
