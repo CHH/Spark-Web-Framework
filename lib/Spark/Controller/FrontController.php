@@ -46,13 +46,23 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     
     $this->getRouter()->route($request);
     
-    $command = $this->getResolver()->getCommand($request);
+    try {
+      $command = $this->getResolver()->getCommand($request);
+  
+      if($command) {
+          $command->execute($request, $response);
+  
+      } else {
+        // Call the Error Command
+        $request->setParam("code", 404);
+        $this->getResolver()->getCommandByName($this->_errorCommandName)
+             ->execute($request, $response);
+      }
     
-    if($command) {
-      $command->execute($request, $response);
-      
-    } else {
-      // Call the Error Command
+    } catch(Exception $e) {
+      $request->setParam("code", 500);
+      $request->setParam("exception", $e);
+
       $this->getResolver()->getCommandByName($this->_errorCommandName)
            ->execute($request, $response);
     }
@@ -62,6 +72,20 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     $response->sendResponse();
   }
   
+  public function handleException(Exception $e) 
+  {
+    $errorCommand = $this->getResolver()->getCommandByName($this->_errorCommandName);
+    
+    $request = $this->getRequest();
+    $response = $this->getResponse();
+    
+    $request->setParam("code", $e->getCode());
+    $request->setParam("exception", $e);
+    
+    $errorCommand->execute($request, $response);
+    
+    $this->_postfilters->process($request, $response);
+  }
   
   public function addPreFilter(Spark_Controller_FilterInterface $filter)
   {
