@@ -16,7 +16,7 @@ class Spark_Model_Collection implements Iterator, ArrayAccess
     $this->_data = $data;
   }
   
-  public function sort($field, $mode = "asc")
+  public function sortBy($field, $mode = "asc")
   {
     $mode = strtolower($mode);
     
