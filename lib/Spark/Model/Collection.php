@@ -3,6 +3,9 @@
 class Spark_Model_Collection implements Iterator, ArrayAccess
 {
   
+  /**
+   * @var array
+   */
   protected $_data = array();
   
   /**
@@ -10,10 +13,27 @@ class Spark_Model_Collection implements Iterator, ArrayAccess
    */
   protected $_pos = 0;
   
+  /**
+   * @var $_sortField Used to pass the name of the entity property on which the 
+   *                  sorting should be done
+   */
   protected $_sortField = null;
   
-  public function __construct($data = array()) {
+  public function __construct(array $data = array()) 
+  {
     $this->_data = $data;
+  }
+  
+  public function prepend($data)
+  {
+    $this->_data = $this->_merge($data, $this->_data);
+    return $this;
+  }
+  
+  public function append($data) 
+  {
+    $this->_data = $this->_merge($this->_data, $data);
+    return $this;
   }
   
   public function sortBy($field, $mode = "asc")
@@ -63,6 +83,11 @@ class Spark_Model_Collection implements Iterator, ArrayAccess
     }
     
     return ($a > $b) ? -1 : 1;
+  }
+  
+  public function toArray()
+  {
+    return $this->_data;
   }
   
   public function offsetSet($offset, $value)
@@ -135,4 +160,22 @@ class Spark_Model_Collection implements Iterator, ArrayAccess
   {
     return key($this->_data);
   }
+  
+  protected function _merge($data1, $data2)
+  {
+    if($data1 instanceof Spark_Model_Collection) {
+      $data1 = $data1->toArray();
+    }
+    
+    if($data2 instanceof Spark_Model_Collection) {
+      $data2 = $data2->toArray();
+    }
+    
+    array_values($data1);
+    array_values($data2);
+    
+    return array_merge($data1, $data2);
+  }
+  
 }
+
