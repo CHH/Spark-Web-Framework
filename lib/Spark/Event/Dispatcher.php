@@ -56,9 +56,9 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
     }
     
     if( !$this->hasCallbacks($event) and 
-        !$this->_registry[$event] instanceof Spark_Event_Handler_Queue ) 
+        !$this->_registry[$event] instanceof Spark_Event_HandlerQueue ) 
     {
-      $this->_registry[$event] = new Spark_Event_Handler_Queue;
+      $this->_registry[$event] = new Spark_Event_HandlerQueue;
     }
     
     $this->_registry[$event]->enqueue($callback);
@@ -116,7 +116,7 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
           
           // Although if the return value of the callback was false, we assume
           // a failure occured
-          if( Spark_Event_Event::FAILURE === $result ) {
+          if( Spark_Event::FAILURE === $result ) {
             $eventObject->setExecutionState(Spark_Event::FAILURE);
           }
           
