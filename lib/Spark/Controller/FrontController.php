@@ -11,8 +11,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   
   protected $_router = null;
   
-  protected $_preFilters;
-  protected $_postFilters;
+  protected $_eventDispatcher = null;
   
   private $_filterClass = "Spark_Controller_FilterInterface";
   
@@ -20,12 +19,6 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   
   public function __construct($options = null)
   {
-    $this->_preFilters = new Spark_FilterChain;
-    $this->_postFilters = new Spark_FilterChain;
-    
-    $this->_preFilters->accept($this->_filterClass);
-    $this->_postFilters->accept($this->_filterClass);
-    
     if(!is_null($options)) {
       $this->setOptions($options);
     }
@@ -42,13 +35,24 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     $request = $this->getRequest();
     $response = $this->getResponse();
     
-    $this->_preFilters->process($request, $response);
+    $eventDispatcher = $this->getEventDispatcher();
+    $eventNamespace = "spark.controller.front_controller";
+    
+    $event = new Spark_Controller_Event($eventNamespace, null, time());
+    $event->setRequest($request)->setResponse($response);
+    
+    $eventDispatcher->trigger($eventNamespace . ".routeStartup", null, $event);
     
     $this->getRouter()->route($request);
     
+    $eventDispatcher->trigger($eventNamespace . ".routeShutdown", null, $event);
+    
     try {
+      
       $command = $this->getResolver()->getCommand($request);
-  
+      
+      $eventDispatcher->trigger($eventNamespace . ".beforeDispatch", null, $event);
+      
       if($command) {
           $command->execute($request, $response);
   
@@ -58,7 +62,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
         $this->getResolver()->getCommandByName($this->_errorCommandName)
              ->execute($request, $response);
       }
-    
+      
     } catch(Exception $e) {
       $request->setParam("code", 500);
       $request->setParam("exception", $e);
@@ -67,13 +71,15 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
            ->execute($request, $response);
     }
     
-    $this->_postFilters->process($request, $response);
+    $eventDispatcher->trigger($eventNamespace . ".afterDispatch", null, $event);
     
     $response->sendResponse();
   }
   
   public function handleException(Exception $e) 
   {
+    $event = new Spark_Controller_Event("spark.controller.front_controller", null, time());
+    
     $errorCommand = $this->getResolver()->getCommandByName($this->_errorCommandName);
     
     $request = $this->getRequest();
@@ -84,19 +90,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     
     $errorCommand->execute($request, $response);
     
-    $this->_postfilters->process($request, $response);
-  }
-  
-  public function addPreFilter(Spark_Controller_FilterInterface $filter)
-  {
-    $this->_preFilters->add($filter);
-    return $this;
-  }
-
-  public function addPostFilter(Spark_Controller_FilterInterface $filter)
-  {
-    $this->_postFilters->add($filter);
-    return $this;
+    $this->getEventDispatcher()->trigger("spark.controller.front_controller.afterDispatch", null, $event);
   }
   
   public function getRequest()
@@ -154,9 +148,17 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     return $this;
   }
   
-  public function setFilterClass($filterClass)
+  public function setEventDispatcher(Spark_Event_DispatcherInterface $dispatcher)
   {
-    $this->_filterClass = $filterClass;
+    $this->_eventDispatcher = $dispatcher;
     return $this;
+  }
+  
+  public function getEventDispatcher()
+  {
+    if(is_null($this->_eventDispatcher)) {
+      $this->_eventDispatcher = Spark_Event_Dispatcher::getInstance();
+    }
+    return $this->_eventDispatcher;
   }
 }

@@ -1,7 +1,7 @@
 <?php
 
-class Spark_Controller_Filter_ApplyLayout 
-  implements Spark_Controller_FilterInterface, Spark_UnifiedConstructorInterface
+class Spark_Controller_Plugin_Layout 
+  implements Spark_Event_HandlerInterface, Spark_UnifiedConstructorInterface
 {
   
   protected $_layoutName = "default.phtml";
@@ -16,19 +16,15 @@ class Spark_Controller_Filter_ApplyLayout
     }
   }
   
-  public function execute(
-    Spark_Controller_RequestInterface $request,
-    Zend_Controller_Response_Abstract $response
-  )
+  public function handleEvent(Spark_Event $event)
   {
-    
-    $body = $response->getBody();
+    $body = $event->getResponse()->getBody();
     
     $layout = $this->getLayout();
     
     $layout->content = $body;
     
-    $response->setBody($layout->render($this->_layoutName));
+    $event->getResponse()->setBody($layout->render($this->_layoutName));
     
   }
   

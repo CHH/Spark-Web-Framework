@@ -1,6 +1,6 @@
 <?php
 
-class Spark_Event_Dispatcher
+class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
 {
   
   /**
@@ -48,7 +48,7 @@ class Spark_Event_Dispatcher
    *
    * @return Spark_Event_Dispatcher Providing a fluent interface
    */
-  public function register($event, $callback)
+  public function on($event, $callback)
   {
     
     if( !is_string($event) ) {
@@ -73,14 +73,16 @@ class Spark_Event_Dispatcher
    *
    * @return Spark_Event_Event Contains status information about the event
    */
-  public function trigger($event, $message = null)
+  public function trigger($event, $message = null, $eventObject = null)
   {
     
     if( !is_string($event) ) {
       throw new InvalidArgumentException("The name of the event must be a string");
     }
     
-    $eventObject = new Spark_Event_Event($event, $message, time());
+    if(is_null($eventObject)) {
+      $eventObject = new Spark_Event($event, $message, time());
+    }
     
     if( $this->hasCallbacks($event) ) {
       
@@ -94,7 +96,7 @@ class Spark_Event_Dispatcher
         
         try {
         
-          if( $callback instanceof Spark_Event_Handler_Interface ) {
+          if( $callback instanceof Spark_Event_HandlerInterface ) {
             $result = $callback->handleEvent($eventObject);
   
           } elseif( $callback instanceof Closure ) {
@@ -105,17 +107,17 @@ class Spark_Event_Dispatcher
   
           } else {
             throw new Spark_Event_InvalidHandlerException("The handler must be an object
-              implementing the Spark_Event_Handler_Interface, an instance of the class
+              implementing the Spark_Event_HandlerInterface, an instance of the class
               Closure or the name of a defined callback function");
           }
           
           // The callback did not throw any Exception, therefore we assume it was successful
-          $eventObject->setExecutionState(Spark_Event_Event::SUCCESS);
+          $eventObject->setExecutionState(Spark_Event::SUCCESS);
           
           // Although if the return value of the callback was false, we assume
           // a failure occured
           if( Spark_Event_Event::FAILURE === $result ) {
-            $eventObject->setExecutionState(Spark_Event_Event::FAILURE);
+            $eventObject->setExecutionState(Spark_Event::FAILURE);
           }
           
         } catch( Spark_Event_Exception $e ) {

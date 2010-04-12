@@ -72,9 +72,9 @@ class Spark_Event
    *
    * @return Spark_Event_Event
    */
-  public function __construct($event, $message, $timestamp)
+  public function __construct($event, $message = null, $timestamp)
   {
-    $this->_setName($event);
+    $this->setName($event);
     $this->_setMessage($message);
     $this->_setTimestamp($timestamp);
   }
@@ -84,7 +84,7 @@ class Spark_Event
    * @param  string $eventName
    * @return Spark_Event_Event Providing a fluent interface
    */
-  protected function _setName($eventName)
+  public function setName($eventName)
   {
     $this->_eventName = $eventName;
     return $this;
