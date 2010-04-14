@@ -80,8 +80,8 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
       throw new InvalidArgumentException("The name of the event must be a string");
     }
     
-    if(is_null($eventObject)) {
-      $eventObject = new Spark_Event($event, $message, time());
+    if( is_null($eventObject) ) {
+      $eventObject = new Spark_Event_Event($event, $message, time());
     }
     
     if( $this->hasCallbacks($event) ) {
@@ -116,7 +116,7 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
           
           // Although if the return value of the callback was false, we assume
           // a failure occured
-          if( Spark_Event::FAILURE === $result ) {
+          if( Spark_Event_Event::FAILURE === $result ) {
             $eventObject->setExecutionState(Spark_Event::FAILURE);
           }
           

@@ -1,6 +1,6 @@
 <?php
 
-class Spark_Controller_Event extends Spark_Event
+class Spark_Controller_Event extends Spark_Event_Event
 {
   
   protected $_request;

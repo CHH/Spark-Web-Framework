@@ -1,6 +1,6 @@
 <?php
 
-class Spark_Event
+class Spark_Event_Event
 {
   /**
    * Event was accepted by the handler

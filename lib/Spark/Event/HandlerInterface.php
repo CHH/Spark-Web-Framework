@@ -10,7 +10,7 @@ interface Spark_Event_HandlerInterface
    * @return int The handler should return a status code (true/false, status code 
    *             constants from Spark_Event)
    */
-  public function handleEvent(Spark_Event $event);
+  public function handleEvent($event);
   
 }
 
