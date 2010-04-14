@@ -1,7 +1,7 @@
 <?php
 
-class Spark_Controller_Plugin_Layout 
-  implements Spark_Event_HandlerInterface, Spark_UnifiedConstructorInterface
+class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
+  implements Spark_UnifiedConstructorInterface
 {
   
   protected $_layoutName = "default.phtml";
@@ -16,16 +16,14 @@ class Spark_Controller_Plugin_Layout
     }
   }
   
-  public function handleEvent($event)
+  public function afterDispatch($request, $response)
   {
-    $body = $event->getResponse()->getBody();
-    
+    $body = $response->getBody();
+
     $layout = $this->getLayout();
-    
     $layout->content = $body;
-    
-    $event->getResponse()->setBody($layout->render($this->_layoutName));
-    
+
+    $response->setBody($layout->render($this->_layoutName));
   }
   
   public function setOptions($options)

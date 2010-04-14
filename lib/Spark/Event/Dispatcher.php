@@ -50,13 +50,12 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
    */
   public function on($event, $callback)
   {
-    
-    if( !is_string($event) ) {
+    if(!is_string($event)) {
       throw new InvalidArgumentException("The name of the event must be a string");
     }
     
-    if( !$this->hasCallbacks($event) and 
-        !$this->_registry[$event] instanceof Spark_Event_HandlerQueue ) 
+    if(!$this->hasCallbacks($event) and 
+       !$this->_registry[$event] instanceof Spark_Event_HandlerQueue) 
     {
       $this->_registry[$event] = new Spark_Event_HandlerQueue;
     }
@@ -69,68 +68,47 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
   /**
    * Triggers (fires) an event
    * @param  string $event   Name of the Event which should be triggered
-   * @param  mixed  $message Optional message to be sent to the handler
+   * @param  object $context The Object context in which the Event got triggered
    *
    * @return Spark_Event_Event Contains status information about the event
    */
-  public function trigger($event, $message = null, $eventObject = null)
+  public function trigger($event, $context = null, $eventObj = null)
   {
-    
-    if( !is_string($event) ) {
+    if(!is_string($event)) {
       throw new InvalidArgumentException("The name of the event must be a string");
     }
     
-    if( is_null($eventObject) ) {
-      $eventObject = new Spark_Event_Event($event, $message, time());
+    if(is_null($eventObj)) {
+      $eventObj = new Spark_Event_Event;
     }
     
-    if( $this->hasCallbacks($event) ) {
+    $eventObj->setName($event);
+    
+    if(!is_null($context)) {
+      $eventObj->setContext($context);
+    }
+    
+    if($this->hasCallbacks($event)) {
       
-      $queue = $this->_registry[$event];
-      
-      foreach( $queue as $callback ) {
-        
-        // Change the transmission state from NOT_DISPATCHED to ACCEPTED.
-        // The Event could still be rejected by the callback after that.
-        $eventObject->accept();
-        
-        try {
-        
-          if( $callback instanceof Spark_Event_HandlerInterface ) {
-            $result = $callback->handleEvent($eventObject);
-  
-          } elseif( $callback instanceof Closure ) {
-            $result = $callback($eventObject);
-  
-          } elseif( is_string($callback) and function_exists($callback) ) {
-            $result = call_user_func_array($callback, array($eventObject));
-  
-          } else {
-            throw new Spark_Event_InvalidHandlerException("The handler must be an object
-              implementing the Spark_Event_HandlerInterface, an instance of the class
-              Closure or the name of a defined callback function");
-          }
+      foreach($this->_registry[$event] as $callback) {
+        if($callback instanceof Spark_Event_HandlerInterface) {
+          $callback->handleEvent($eventObj);
           
-          // The callback did not throw any Exception, therefore we assume it was successful
-          $eventObject->setExecutionState(Spark_Event_Event::SUCCESS);
+        } elseif($callback instanceof Closure) {
+          $callback($eventObj);
           
-          // Although if the return value of the callback was false, we assume
-          // a failure occured
-          if( Spark_Event_Event::FAILURE === $result ) {
-            $eventObject->setExecutionState(Spark_Event::FAILURE);
-          }
+        } elseif(is_string($callback) and function_exists($callback)) {
+          call_user_func_array($callback, array($eventObj));
           
-        } catch( Spark_Event_Exception $e ) {
-        
-          $eventObject = $e->getEvent();
-          
+        } else {
+          throw new Spark_Event_InvalidHandlerException("The handler must be an object
+            implementing the Spark_Event_HandlerInterface, a Lamda Function, Closure or 
+            the name of a defined callback function");
         }
-        
       }
-      
     }
     
-    return $eventObject;
+    return $eventObj;
   }
   
   /**
@@ -143,12 +121,7 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
     if( !is_string($event) ) {
       throw new InvalidArgumentException("The name of the event must be a string");
     }
-    
-    if( isset($this->_registry[$event]) ) {
-      return true;
-    } else {
-      return false;
-    }
+    return isset($this->_registry[$event]) ? true : false;
   }
   
 }

@@ -13,10 +13,13 @@ class Spark_Controller_ActionController implements Spark_Controller_CommandInter
       $action = "index";
     }
     
-    $methodName = $action . "Action";
+    $method = str_replace(" ", "", ucwords(str_replace("_", " ", strtolower($action))));
+    $method[0] = strtolower($method[0]);
     
-    if(method_exists($this, $methodName)) {
-      $this->$methodName();
+    $method = $action . "Action";
+    
+    if(method_exists($this, $method)) {
+      $this->$method();
     }
     
   }

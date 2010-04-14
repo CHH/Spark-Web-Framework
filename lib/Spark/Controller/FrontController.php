@@ -17,6 +17,11 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   
   private $_errorCommandName = "Error";
   
+  const EVENT_ROUTE_STARTUP = "spark.controller.front_controller.route_startup";
+  const EVENT_ROUTE_SHUTDOWN = "spark.controller.front_controller.route_shutdown";
+  const EVENT_BEFORE_DISPATCH = "spark.controller.front_controller.before_dispatch";
+  const EVENT_AFTER_DISPATCH = "spark.controller.front_controller.after_dispatch";
+  
   public function __construct($options = null)
   {
     if(!is_null($options)) {
@@ -36,26 +41,23 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     $response = $this->getResponse();
     
     $eventDispatcher = $this->getEventDispatcher();
-    $eventNamespace = "spark.controller.front_controller";
     
-    $event = new Spark_Controller_Event($eventNamespace, null, time());
+    $event = new Spark_Controller_Event;
     $event->setRequest($request)->setResponse($response);
     
-    $eventDispatcher->trigger($eventNamespace . ".routeStartup", null, $event);
+    $eventDispatcher->trigger(self::EVENT_ROUTE_STARTUP, null, $event);
     
     $this->getRouter()->route($request);
     
-    $eventDispatcher->trigger($eventNamespace . ".routeShutdown", null, $event);
+    $eventDispatcher->trigger(self::EVENT_ROUTE_SHUTDOWN, null, $event);
     
     try {
-      
       $command = $this->getResolver()->getCommand($request);
       
-      $eventDispatcher->trigger($eventNamespace . ".beforeDispatch", null, $event);
+      $eventDispatcher->trigger(self::EVENT_BEFORE_DISPATCH, null, $event);
       
       if($command) {
           $command->execute($request, $response);
-  
       } else {
         // Call the Error Command
         $request->setParam("code", 404);
@@ -71,14 +73,17 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
            ->execute($request, $response);
     }
     
-    $eventDispatcher->trigger($eventNamespace . ".afterDispatch", null, $event);
+    $request->setDispatched(true);
+    
+    $eventDispatcher->trigger(self::EVENT_AFTER_DISPATCH, null, $event);
     
     $response->sendResponse();
   }
   
   public function handleException(Exception $e) 
   {
-    $event = new Spark_Controller_Event("spark.controller.front_controller", null, time());
+    $event = new Spark_Controller_Event;
+    $event->setRequest($request)->setResponse($response);
     
     $errorCommand = $this->getResolver()->getCommandByName($this->_errorCommandName);
     
@@ -90,7 +95,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     
     $errorCommand->execute($request, $response);
     
-    $this->getEventDispatcher()->trigger("spark.controller.front_controller.afterDispatch", null, $event);
+    $this->getEventDispatcher()->trigger("spark.controller.front_controller.after_dispatch", null, $event);
   }
   
   public function getRequest()
