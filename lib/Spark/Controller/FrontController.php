@@ -82,9 +82,6 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   
   public function handleException(Exception $e) 
   {
-    $event = new Spark_Controller_Event;
-    $event->setRequest($request)->setResponse($response);
-    
     $errorCommand = $this->getResolver()->getCommandByName($this->_errorCommandName);
     
     $request = $this->getRequest();
@@ -92,6 +89,9 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     
     $request->setParam("code", $e->getCode());
     $request->setParam("exception", $e);
+    
+    $event = new Spark_Controller_Event;
+    $event->setRequest($request)->setResponse($response);
     
     $errorCommand->execute($request, $response);
     
