@@ -9,6 +9,8 @@ class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
   
   protected $_layout = null;
   
+  protected $_disabled = false;
+  
   public function __construct($options = null)
   {
     if(!is_null($options)) {
@@ -18,12 +20,14 @@ class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
   
   public function afterDispatch($request, $response)
   {
-    $body = $response->getBody();
-
-    $layout = $this->getLayout();
-    $layout->content = $body;
-
-    $response->setBody($layout->render($this->_layoutName));
+    if(!$this->_disabled) {
+      $body = $response->getBody();
+  
+      $layout = $this->getLayout();
+      $layout->content = $body;
+  
+      $response->setBody($layout->render($this->_layoutName));
+    }
   }
   
   public function setOptions($options)
@@ -59,6 +63,12 @@ class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
     }
     
     return $this->_layout;
+  }
+  
+  public function disableLayout($flag = true)
+  {
+    $this->_disabled = $flag;
+    return $this;
   }
   
 }
