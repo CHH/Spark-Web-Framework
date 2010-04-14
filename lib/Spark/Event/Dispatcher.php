@@ -112,7 +112,7 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
           }
           
           // The callback did not throw any Exception, therefore we assume it was successful
-          $eventObject->setExecutionState(Spark_Event::SUCCESS);
+          $eventObject->setExecutionState(Spark_Event_Event::SUCCESS);
           
           // Although if the return value of the callback was false, we assume
           // a failure occured

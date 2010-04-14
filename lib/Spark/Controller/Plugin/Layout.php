@@ -16,7 +16,7 @@ class Spark_Controller_Plugin_Layout
     }
   }
   
-  public function handleEvent(Spark_Event $event)
+  public function handleEvent($event)
   {
     $body = $event->getResponse()->getBody();
     
