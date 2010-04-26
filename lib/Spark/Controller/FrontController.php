@@ -2,19 +2,39 @@
 
 class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterface
 {
-  
+  /**
+   * @var Spark_Controller_RequestInterface
+   */
   protected $_request = null;
   
+  /**
+   * @var Zend_Controller_Request_Abstract
+   */
   protected $_response = null;
   
+  /**
+   * @var Spark_Controller_CommandResolverInterface
+   */
   protected $_resolver = null;
   
+  /**
+   * @var Zend_Controller_Router_Interface
+   */
   protected $_router = null;
   
+  /** 
+   * @var Spark_Event_Dispatcher
+   */
   protected $_eventDispatcher = null;
   
+  /**
+   * @var string
+   */
   private $_filterClass = "Spark_Controller_FilterInterface";
   
+  /**
+   * @var string
+   */
   private $_errorCommandName = "Error";
   
   const EVENT_ROUTE_STARTUP = "spark.controller.front_controller.route_startup";
@@ -29,12 +49,31 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     }
   }
   
+  /**
+   * setOptions() - Used to set configuration options on the object
+   * @param mixed $options Either an array of key value pairs matching the 
+   *                       Names of the Setter Methods or an Zend_Config Instance
+   *
+   * @return Spark_Controller_FrontController
+   */
   public function setOptions($options)
   {
     Spark_Object_Options::setOptions($this, $options);
     return $this;
   }
   
+  /**
+   * handleRequest() - This is where the heavy lifting in the Front Controller is
+   *   done. Routes the request, loads the command, throws an exception if something
+   *   goes wronng and triggers events for you to handle them.
+   *   Four events are thrown throughout the dispatching cycle, they alle have
+   *   the common namespace of "spark.controller.front_controller.":
+   *     - route_startup, is called before routing is done
+   *     - route_shutdown, routing is done
+   *     - before_dispatch, before the command gets loaded and executed
+   *     - after_dispatch, after the command was executed and before the response
+   *       gets sent to the client
+   */
   public function handleRequest()
   {
     $request = $this->getRequest();
@@ -57,29 +96,38 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
       $eventDispatcher->trigger(self::EVENT_BEFORE_DISPATCH, null, $event);
       
       if($command) {
-          $command->execute($request, $response);
+        $request->setDispatched(true);
+        $command->execute($request, $response);
+        
+        /** 
+         * If the dispatched flag is not true (e.g. if a command forwards 
+         * request to another command), do another round in the dispatch loop.
+         */
+        if(!$request->isDispatched()) {
+          $this->handleRequest();
+        }
       } else {
-        // Call the Error Command
-        $request->setParam("code", 404);
-        $this->getResolver()->getCommandByName($this->_errorCommandName)
-             ->execute($request, $response);
+        throw new Spark_Controller_Exception("There was no matching command for this
+          Request found. Make sure the Command {$request->getCommandName()} exists", 404);
       }
       
+      $eventDispatcher->trigger(self::EVENT_AFTER_DISPATCH, null, $event);
+  
+      $response->sendResponse();
+      
     } catch(Exception $e) {
-      $request->setParam("code", 500);
-      $request->setParam("exception", $e);
-
-      $this->getResolver()->getCommandByName($this->_errorCommandName)
-           ->execute($request, $response);
+      $this->handleException($e);
     }
     
-    $request->setDispatched(true);
-    
-    $eventDispatcher->trigger(self::EVENT_AFTER_DISPATCH, null, $event);
-    
-    $response->sendResponse();
   }
   
+  /**
+   * handleException() - Can either be registered as fallback exception handler
+   *   with set_exception_handler for more friendly uncatched Exceptions or you can pass
+   *   an Exception directly to it, like in the handleRequest Method
+   *
+   * @param Exception $e
+   */
   public function handleException(Exception $e) 
   {
     $errorCommand = $this->getResolver()->getCommandByName($this->_errorCommandName);
@@ -93,9 +141,12 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     $event = new Spark_Controller_Event;
     $event->setRequest($request)->setResponse($response);
     
+    $request->setDispatched(true);
     $errorCommand->execute($request, $response);
     
     $this->getEventDispatcher()->trigger("spark.controller.front_controller.after_dispatch", null, $event);
+    
+    $response->sendResponse();
   }
   
   public function getRequest()

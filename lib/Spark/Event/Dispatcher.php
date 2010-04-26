@@ -5,9 +5,9 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
   
   /**
    * Contains the events and their callbacks
-   * @var mixed
+   * @var array
    */
-  protected $_registry;
+  protected $_registry = array();
   
   /**
    * Instance of the class for singleton
@@ -54,8 +54,7 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
       throw new InvalidArgumentException("The name of the event must be a string");
     }
     
-    if(!$this->hasCallbacks($event) and 
-       !$this->_registry[$event] instanceof Spark_Event_HandlerQueue) 
+    if(!$this->hasCallbacks($event)) 
     {
       $this->_registry[$event] = new Spark_Event_HandlerQueue;
     }
