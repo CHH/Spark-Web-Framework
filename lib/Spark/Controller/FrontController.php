@@ -35,7 +35,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   /**
    * @var string
    */
-  private $_errorCommandName = "Error";
+  private $_errorCommand = "Error";
   
   const EVENT_ROUTE_STARTUP = "spark.controller.front_controller.route_startup";
   const EVENT_ROUTE_SHUTDOWN = "spark.controller.front_controller.route_shutdown";
@@ -44,9 +44,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   
   public function __construct($options = null)
   {
-    if(!is_null($options)) {
-      $this->setOptions($options);
-    }
+    $this->setOptions($options);
   }
   
   /**
@@ -130,7 +128,12 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
    */
   public function handleException(Exception $e) 
   {
-    $errorCommand = $this->getResolver()->getCommandByName($this->_errorCommandName);
+    if(strpos($this->_errorCommand, "::")) {
+      $command = explode("::", $this->_errorCommand);
+      $errorCommand = $this->getResolver()->getCommandByName($command[1], $command[0]);
+    } else {
+      $errorCommand = $this->getResolver()->getCommandByName($this->_errorCommand);
+    }
     
     $request = $this->getRequest();
     $response = $this->getResponse();
@@ -216,5 +219,16 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
       $this->_eventDispatcher = Spark_Event_Dispatcher::getInstance();
     }
     return $this->_eventDispatcher;
+  }
+  
+  public function setErrorCommand($command)
+  {
+    $this->_errorCommand = $command;
+    return $this;
+  }
+  
+  public function getErrorCommand()
+  {
+    return $this->_errorCommand;
   }
 }

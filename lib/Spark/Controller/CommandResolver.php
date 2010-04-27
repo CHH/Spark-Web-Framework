@@ -29,7 +29,6 @@ class Spark_Controller_CommandResolver
   
   public function getCommand(Spark_Controller_RequestInterface $request)
   { 
-    
     if(!is_null($request->getModuleName())) {
       $command = $this->_loadCommand($request->getCommandName(), $request->getModuleName());
       return $command;
