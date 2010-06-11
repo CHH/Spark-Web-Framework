@@ -216,7 +216,10 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   public function getEventDispatcher()
   {
     if(is_null($this->_eventDispatcher)) {
-      $this->_eventDispatcher = Spark_Event_Dispatcher::getInstance();
+      throw new Spark_Controller_Exception("Spark Controller requires an "
+        . "Event Dispatcher to work. Please supply either an Instance of "
+        . "Spark_Event_Dispatcher or an object implementing the "
+        . "Spark_Event_DispatcherInterface to the setEventDispatcher() Method");
     }
     return $this->_eventDispatcher;
   }

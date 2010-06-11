@@ -1,43 +1,12 @@
 <?php
 
 class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
-{
-  
+{ 
   /**
    * Contains the events and their callbacks
    * @var array
    */
   protected $_registry = array();
-  
-  /**
-   * Instance of the class for singleton
-   * @var Spark_Event_Dispatcher
-   */
-  protected static $_instance;
-  
-  /**
-   * Protected Constructor to prevent instantiation
-   */
-  protected function __construct() 
-  {}
-  
-  /**
-   * Private clone method to prevent duplication
-   */
-  private function __clone() 
-  {}
-  
-  /**
-   * Get an instance of the class
-   * @return Spark_Event_Dispatcher
-   */
-  public static function getInstance()
-  {
-    if( null === self::$_instance ) {
-      self::$_instance = new self;
-    }
-    return self::$_instance;
-  }
   
   /**
    * Connects a callback to an event
@@ -48,7 +17,7 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
    *
    * @return Spark_Event_Dispatcher Providing a fluent interface
    */
-  public function on($event, $callback)
+  public function register($event, $callback)
   {
     if(!is_string($event)) {
       throw new InvalidArgumentException("The name of the event must be a string");
@@ -62,6 +31,15 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
     $this->_registry[$event]->enqueue($callback);
     
     return $this;
+  }
+  
+  /**
+   * Shortcut for registering a handler on an event
+   * @see register()
+   */
+  public function on($event, $callback)
+  {
+    return $this->register($event, $callback);
   }
   
   /**
