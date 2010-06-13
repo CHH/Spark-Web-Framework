@@ -82,6 +82,7 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
             implementing the Spark_Event_HandlerInterface, a Lamda Function, Closure or 
             the name of a defined callback function");
         }
+        $eventObj->setDispatched();
       }
     }
     

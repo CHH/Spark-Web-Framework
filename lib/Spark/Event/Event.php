@@ -21,6 +21,8 @@ class Spark_Event_Event
    */
   protected $_timestamp;
   
+  protected $_dispatched = false;
+  
   /**
    * Constructor
    * @param  string $event
@@ -73,6 +75,17 @@ class Spark_Event_Event
   public function hasContext()
   {
     return ($this->_context !== null) ? true : false;
+  }
+  
+  public function setDispatched($dispatched = true)
+  {
+    $this->_dispatched = $dispatched ? true : false;
+    return $this;
+  }
+  
+  public function isDispatched()
+  {
+    return $this->_dispatched;
   }
   
   /**

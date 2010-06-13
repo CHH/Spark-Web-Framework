@@ -1,6 +1,6 @@
 <?php
 
-class SampleObject implements Spark_UnifiedConstructorInterface
+class DummyObject implements Spark_UnifiedConstructorInterface
 {
   
   protected $_fooBar;
