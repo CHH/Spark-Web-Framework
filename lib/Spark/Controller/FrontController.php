@@ -1,5 +1,23 @@
 <?php
+/**
+ * Simple Implementation of a Front Controller.
+ * 
+ * This source file is subject to the MIT license that is bundled
+ * with this package in the file LICENSE.txt.
+ *
+ * @category   Spark
+ * @package    Spark_Controller
+ * @author     Christoph Hochstrasser <christoph.hochstrasser@gmail.com>
+ * @copyright  Copyright (c) 2010 Christoph Hochstrasser
+ * @license    MIT License
+ */
 
+/**
+ * @category   Spark
+ * @package    Spark_Controller
+ * @copyright  Copyright (c) 2010 Christoph Hochstrasser
+ * @license    MIT License
+ */
 class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterface
 {
   /**
@@ -71,6 +89,8 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
    *     - before_dispatch, before the command gets loaded and executed
    *     - after_dispatch, after the command was executed and before the response
    *       gets sent to the client
+   * 
+   * @return void
    */
   public function handleRequest()
   {

@@ -1,5 +1,23 @@
 <?php
+/**
+ * Binds an Entity Property to an instance of a foreign Entity
+ * 
+ * This source file is subject to the MIT license that is bundled
+ * with this package in the file LICENSE.txt.
+ *
+ * @category   Spark
+ * @package    Spark_Model
+ * @author     Christoph Hochstrasser <christoph.hochstrasser@gmail.com>
+ * @copyright  Copyright (c) 2010 Christoph Hochstrasser
+ * @license    MIT License
+ */
 
+/**
+ * @category   Spark
+ * @package    Spark_Model
+ * @copyright  Copyright (c) 2010 Christoph Hochstrasser
+ * @license    MIT License
+ */
 class Spark_Model_DataBinding
 {
   
@@ -14,7 +32,6 @@ class Spark_Model_DataBinding
   protected $_referenceId;
   
   protected $_dataMapper = null;
-  
   
   static public function staticBind($class)
   {
@@ -43,6 +60,16 @@ class Spark_Model_DataBinding
   public function getIdentifier()
   {
     return $this->_property;
+  }
+  
+  public function setMapper($mapper)
+  {
+    if (is_string($mapper)) {
+      $this->_mapperName = $mapper;
+    } elseif ($mapper instanceof Spark_Model_Mapper_Interface) {
+      $this->_dataMapper     = $mapper;
+    }
+    return $this;
   }
   
   public function getReference()

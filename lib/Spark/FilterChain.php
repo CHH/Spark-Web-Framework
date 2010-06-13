@@ -6,16 +6,17 @@
  * with this package in the file LICENSE.txt.
  *
  * @category   Spark
- * @package    Spark
+ * @package    Spark_FilterChain
+ * @author     Christoph Hochstrasser <christoph.hochstrasser@gmail.com>
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @license    MIT License
  */
 
 /**
  * @category   Spark
- * @package    Spark
+ * @package    Spark_FilterChain
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @license    MIT License
  */
 class Spark_FilterChain 
   implements Spark_FilterChainInterface, Spark_UnifiedConstructorInterface

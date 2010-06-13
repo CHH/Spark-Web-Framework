@@ -1,6 +1,6 @@
 <?php
 /**
- * Spark Framework
+ * Basic Command Interface
  * 
  * This source file is subject to the MIT license that is bundled
  * with this package in the file LICENSE.txt.
@@ -8,14 +8,14 @@
  * @category   Spark
  * @package    Spark_Controller
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @license    MIT License
  */
 
 /**
  * @category   Spark
  * @package    Spark_Controller
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @license    MIT License
  */
 interface Spark_Controller_CommandInterface
 {

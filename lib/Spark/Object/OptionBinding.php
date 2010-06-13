@@ -8,14 +8,14 @@
  * @category   Spark
  * @package    Spark_Object
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @license    MIT License
  */
 
 /**
  * @category   Spark
  * @package    Spark_Object
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @license    MIT License
  */
 class Spark_Object_OptionBinding
 {

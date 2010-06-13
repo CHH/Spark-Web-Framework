@@ -8,14 +8,14 @@
  * @category   Spark
  * @package    Spark_Model
  * @copyright  Copyright (c) 2009 Christoph Hochstrasser
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @license    MIT License
  */
 
 /**
  * @category   Spark
  * @package    Spark_Model
  * @copyright  Copyright (c) 2009 Christoph Hochstrasser
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @license    MIT License
  */
 interface Spark_Model_Filter_Interface
 {

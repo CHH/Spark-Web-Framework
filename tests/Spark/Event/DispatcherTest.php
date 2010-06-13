@@ -4,7 +4,6 @@ class Spark_Event_DispatcherTest
     extends PHPUnit_Framework_Testcase
     implements Spark_Event_HandlerInterface
 {
-    
     const EVENT1 = "event.foo";
     const EVENT2 = "event.bar";
     
@@ -34,5 +33,4 @@ class Spark_Event_DispatcherTest
     {
         return;
     }
-    
 }

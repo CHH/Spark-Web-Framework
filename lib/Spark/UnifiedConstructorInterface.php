@@ -8,14 +8,14 @@
  * @category   Spark
  * @package    Spark
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @license    MIT License
  */
 
 /**
  * @category   Spark
  * @package    Spark
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @license    MIT License
  */
 interface Spark_UnifiedConstructorInterface
 {

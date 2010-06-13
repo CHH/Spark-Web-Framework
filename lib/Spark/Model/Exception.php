@@ -7,15 +7,15 @@
  *
  * @category   Spark
  * @package    Spark_Model
- * @copyright  Copyright (c) 2009 Christoph Hochstrasser
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @copyright  Copyright (c) 2010 Christoph Hochstrasser
+ * @license    MIT License
  */
 
 /**
  * @category   Spark
  * @package    Spark_Model
- * @copyright  Copyright (c) 2009 Christoph Hochstrasser
- * @license http://www.opensource.org/licenses/mit-license.php
+ * @copyright  Copyright (c) 2010 Christoph Hochstrasser
+ * @license    MIT License
  */
 class Spark_Model_Exception extends Zend_Exception
 {}
