@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Spark_Event_Dispatcher</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Spark_Event_Dispatcher</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+													<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+						|											<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+                <p class="implements">
+            Implements interfaces:
+            <ul>
+                <li><a href="../Spark_Event/Spark_Event_DispatcherInterface.html">Spark_Event_DispatcherInterface</a></li>            </ul>
+        </p>
+        		<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">copyright:</span> Copyright (c) 2010 Christoph Hochstrasser</li>
+				<li><span class="field">license:</span> MIT</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_Event---Dispatcher.php.html">/Event/Dispatcher.php</a> (line <span class="field">21</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+	<a name="sec-var-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variable Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+						<span class="disabled">Vars</span> (<a href="#sec-vars">details</a>)
+							| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+								</div>
+		<div class="info-box-body">
+			<div class="var-summary">
+																								<div class="var-title">
+					<span class="var-type">array</span>
+					<a href="#$_registry" title="details" class="var-name">$_registry</a>
+				</div>
+											</div>
+		</div>
+	</div>
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																		<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+				 
+				|
+						<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																				
+												<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#hasCallbacks" title="details" class="method-name">hasCallbacks</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$event</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#on" title="details" class="method-name">on</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$event</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$callback</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Spark_Event/Spark_Event_Dispatcher.html">Spark_Event_Dispatcher</a></span>
+										<a href="#register" title="details" class="method-name">register</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$event</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$callback</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../Spark_Event/Spark_Event_Event.html">Spark_Event_Event</a></span>
+										<a href="#trigger" title="details" class="method-name">trigger</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$event</span>, [<span class="var-type">object</span>&nbsp;<span class="var-name">$context</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$eventObj</span> = <span class="var-default">null</span>])
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	<a name="sec-vars"></a>
+	<div class="info-box">
+		<div class="info-box-title">Variables</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+										<a href="#sec-var-summary">Vars</a> (<span class="disabled">details</span>)
+						
+			
+										| 
+									<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+							
+					</div>
+		<div class="info-box-body">
+			<a name="var$_registry" id="$_registry"><!-- --></A>
+<div class="oddrow">
+
+	<div class="var-header">
+		<span class="var-title">
+			<span class="var-type">array</span>
+			<span class="var-name">$_registry</span>
+			 = <span class="var-default">array()</span>			(line <span class="line-number">27</span>)
+		</span>
+	</div>
+
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Contains the events and their callbacks</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> protected</li>
+			</ul>
+	
+	
+		
+		
+
+</div>
+						
+		</div>
+	</div>
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+															<a href="#sec-var-summary">Vars</a> (<a href="#sec-vars">details</a>)
+																	<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="methodhasCallbacks" id="hasCallbacks"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">hasCallbacks</span> (line <span class="line-number">115</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Checks if callbacks were registered for a certain event</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			hasCallbacks
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$event</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$event</span><span class="var-description">: event</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodon" id="on"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">on</span> (line <span class="line-number">58</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Shortcut for registering a handler on an event</p>
+	<ul class="tags">
+				<li><span class="field">see:</span> <a href="../Spark_Event/Spark_Event_Dispatcher.html#methodregister">Spark_Event_Dispatcher::register()</a></li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			on
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$event</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$callback</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$event</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$callback</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodregister" id="register"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">register</span> (line <span class="line-number">38</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Connects a callback to an event</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Providing a fluent interface</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Spark_Event/Spark_Event_Dispatcher.html">Spark_Event_Dispatcher</a></span>
+		<span class="method-name">
+			register
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$event</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$callback</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$event</span><span class="var-description">: Name of the event</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$callback</span><span class="var-description">: Could be an Object implementing the                            Spark_Event_Handler_Interface, the name of a global                            callback function or a closure (as of PHP &gt; 5.3.0)</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Spark_Event/Spark_Event_DispatcherInterface.html#methodregister">Spark_Event_DispatcherInterface::register()</a></dt>
+					</dl>
+			
+	</div>
+<a name="methodtrigger" id="trigger"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">trigger</span> (line <span class="line-number">70</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Triggers (fires) an event</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Contains status information about the event</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../Spark_Event/Spark_Event_Event.html">Spark_Event_Event</a></span>
+		<span class="method-name">
+			trigger
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$event</span>, [<span class="var-type">object</span>&nbsp;<span class="var-name">$context</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$eventObj</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$event</span><span class="var-description">: Name of the Event which should be triggered</span>			</li>
+					<li>
+				<span class="var-type">object</span>
+				<span class="var-name">$context</span><span class="var-description">: The Object context in which the Event got triggered</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$eventObj</span>			</li>
+				</ul>
+		
+				<hr class="separator" />
+		<div class="notes">Implementation of:</div>
+			<dl>
+			<dt><a href="../Spark_Event/Spark_Event_DispatcherInterface.html#methodtrigger">Spark_Event_DispatcherInterface::trigger()</a></dt>
+					</dl>
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Sun, 13 Jun 2010 20:36:14 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>
