@@ -60,11 +60,21 @@ class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
     return $this;
   }
 
+  public function getLayoutName()
+  {
+    return $this->_layoutName;
+  }
+  
   public function setLayoutPath($layoutPath)
   {
     $this->_layoutPath = $layoutPath;
     $this->getLayout()->setScriptPath($layoutPath);
     return $this;
+  }
+  
+  public function getLayoutPath()
+  {
+    return $this->_layoutPath;
   }
   
   public function getLayout()
