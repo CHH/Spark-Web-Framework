@@ -102,35 +102,37 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     $event = new Spark_Controller_Event;
     $event->setRequest($request)->setResponse($response);
     
+    /**
+     * Routing Process
+     */
     $eventDispatcher->trigger(self::EVENT_ROUTE_STARTUP, null, $event);
     
     $this->getRouter()->route($request);
     
     $eventDispatcher->trigger(self::EVENT_ROUTE_SHUTDOWN, null, $event);
     
+    /**
+     * Dispatching Process
+     */
     try {
-      $command = $this->getResolver()->getCommand($request);
-      
-      $eventDispatcher->trigger(self::EVENT_BEFORE_DISPATCH, null, $event);
-      
-      if($command) {
-        $request->setDispatched(true);
-        $command->execute($request, $response);
-        
-        /** 
-         * If the dispatched flag is not true (e.g. if a command forwards 
-         * request to another command), do another round in the dispatch loop.
-         */
-        if(!$request->isDispatched()) {
-          $this->handleRequest();
-        }
-      } else {
-        throw new Spark_Controller_Exception("There was no matching command for this
-          Request found. Make sure the Command {$request->getCommandName()} exists", 404);
-      }
-      
-      $eventDispatcher->trigger(self::EVENT_AFTER_DISPATCH, null, $event);
+      do {
+        $command = $this->getResolver()->getCommand($request);
   
+        $eventDispatcher->trigger(self::EVENT_BEFORE_DISPATCH, null, $event);
+  
+        if(!$command) {
+          throw new Spark_Controller_Exception("There was no matching command for this
+            Request found. Make sure the Command {$request->getCommandName()} exists", 404);
+        }
+  
+        $request->setDispatched(true);
+        
+        $command->execute($request, $response);
+  
+        $eventDispatcher->trigger(self::EVENT_AFTER_DISPATCH, null, $event);
+      
+      } while (!$request->isDispatched());
+      
       $response->sendResponse();
       
     } catch(Exception $e) {
@@ -167,7 +169,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     $request->setDispatched(true);
     $errorCommand->execute($request, $response);
     
-    $this->getEventDispatcher()->trigger("spark.controller.front_controller.after_dispatch", null, $event);
+    $this->getEventDispatcher()->trigger(self::EVENT_AFTER_DISPATCH, null, $event);
     
     $response->sendResponse();
   }
@@ -224,6 +226,20 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   
   public function setRouter(Zend_Controller_Router_Interface $router) {
     $this->_router = $router;
+    return $this;
+  }
+  
+  public function addPlugin(
+    Spark_Event_HandlerInterface $plugin, 
+    array $listenTo = array(self::EVENT_ROUTE_STARTUP, self::EVENT_ROUTE_SHUTDOWN, self::EVENT_BEFORE_DISPATCH, self::EVENT_AFTER_DISPATCH)
+  )
+  {
+    $eventDispatcher = $this->getEventDispatcher();
+    
+    foreach ($listenTo as $event) {
+      $eventDispatcher->on($event, $plugin);
+    }
+    
     return $this;
   }
   

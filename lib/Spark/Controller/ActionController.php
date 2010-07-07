@@ -22,6 +22,8 @@
  */
 abstract class Spark_Controller_ActionController implements Spark_Controller_CommandInterface
 {
+  protected $_request;
+  protected $_response;
   
   /**
    * Gets called by the Front Controller on dispatch
@@ -35,23 +37,42 @@ abstract class Spark_Controller_ActionController implements Spark_Controller_Com
     Zend_Controller_Response_Abstract $response
   )
   {
+    $this->beforeFilter($request, $response);
+    
     $action = $request->getActionName();
     
     if($action == null) {
       $action = "index";
     }
     
+    $this->_request = $request;
+    $this->_response = $response;
+    
     $method = str_replace(" ", "", ucwords(str_replace("_", " ", str_replace("-", " ", strtolower($action)))));
     $method[0] = strtolower($method[0]);
     
     $method = $action . "Action";
     
-    if(method_exists($this, $method)) {
-      $this->$method($request, $response);
-    } else {
+    if(!method_exists($this, $method)) {
       $controller = get_class($this);
       throw new Spark_Controller_Exception("The action {$action} was not found in
         the controller {$controller}. Please make sure the method {$method} exists.", 404);
     }
+    
+    $this->$method($request, $response);
+    
+    $this->afterFilter($request, $response);
   }
+  
+  public function beforeFilter($request, $response)
+  {}
+  
+  public function afterFilter($request, $response)
+  {}
+  
+  protected function _forward(Spark_Controller_RequestInterface $request)
+  {
+    $request->setDispatched(false);
+  }
+  
 }

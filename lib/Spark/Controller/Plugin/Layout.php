@@ -22,7 +22,7 @@ class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
   implements Spark_UnifiedConstructorInterface
 {
   
-  protected $_layoutName = "default.phtml";
+  protected $_layoutName = "layout.phtml";
   protected $_layoutPath = null;
   
   protected $_layout = null;
