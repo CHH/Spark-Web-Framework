@@ -1,6 +1,6 @@
 <?php
 /**
- * Wraps the Response with Layout common to all views of the site
+ * Wraps the Response with a Layout common to all views of the site
  * 
  * This source file is subject to the MIT license that is bundled
  * with this package in the file LICENSE.txt.
