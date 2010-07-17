@@ -73,15 +73,16 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
       throw new InvalidArgumentException("The name of the event must be a string");
     }
     
+    if($context instanceof Spark_Event_Event and is_null($eventObj)) {
+      $eventObj = $context;
+    }
+    
     if(is_null($eventObj)) {
       $eventObj = new Spark_Event_Event;
     }
     
     $eventObj->setName($event);
-    
-    if(!is_null($context)) {
-      $eventObj->setContext($context);
-    }
+    $eventObj->setContext($context);
     
     if($this->hasCallbacks($event)) {
       

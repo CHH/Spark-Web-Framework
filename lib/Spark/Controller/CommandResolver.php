@@ -74,7 +74,7 @@ class Spark_Controller_CommandResolver
       $path = $this->getModuleDirectory() . DIRECTORY_SEPARATOR . $moduleName . DIRECTORY_SEPARATOR
               . $this->getModuleCommandDirectory() . DIRECTORY_SEPARATOR . $className . ".php";
       
-      $className = ucfirst($moduleName) . "_" . $className;
+      $className = $this->getCommandPrefix($moduleName) . $className;
       
     } else {
       $path = $this->getCommandDirectory() . DIRECTORY_SEPARATOR
@@ -154,4 +154,9 @@ class Spark_Controller_CommandResolver
     return $this;
   }
   
+  public function getCommandPrefix($module)
+  {
+    $prefix = str_replace(" ", null, ucwords(str_replace("_", " ", $module))) . "_";
+    return $prefix;
+  }
 }
