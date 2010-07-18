@@ -1,13 +1,21 @@
 <?php
-/**
+ /**
  * Simple PHP Class to aid in building HTML Markup
+ * 
+ * This source file is subject to the MIT license that is bundled
+ * with this package in the file LICENSE.txt.
  *
- * @author Christoph Hochstrasser <c.hochstrasser@szene1.at>
- * @package HTML
+ * @category   Spark
+ * @package    Spark_HTML
+ * @copyright  Copyright (c) 2010 Christoph Hochstrasser
+ * @license    MIT License
  */
 
 /**
- * Simple PHP Class to aid in building HTML Markup
+ * @category   Spark
+ * @package    Spark_HTML
+ * @copyright  Copyright (c) 2010 Christoph Hochstrasser
+ * @license    MIT License
  */
 class Spark_HTML implements ArrayAccess, Countable
 {

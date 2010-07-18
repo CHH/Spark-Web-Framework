@@ -25,9 +25,9 @@ class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
   protected $_layoutName = "layout.phtml";
   protected $_layoutPath = null;
   
-  protected $_layout = null;
+  protected $_layout     = null;
   
-  protected $_disabled = false;
+  protected $_disabled   = false;
   
   public function __construct($options = null)
   {
@@ -43,7 +43,7 @@ class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
   
       $layout = $this->getLayout();
       $layout->content = $body;
-  
+      
       $response->setBody($layout->render($this->_layoutName));
     }
   }
