@@ -23,6 +23,15 @@ class Spark_Controller_Event extends Spark_Event_Event
   
   protected $_request;
   protected $_response;
+
+  public function __construct(
+    Spark_Controller_RequestInterface $request,
+    Zend_Controller_Response_Abstract $response
+  )
+  {
+    $this->_request  = $request;
+    $this->_response = $response;
+  }
   
   public function setRequest(Spark_Controller_RequestInterface $request)
   {

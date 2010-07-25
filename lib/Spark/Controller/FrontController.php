@@ -105,21 +105,21 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     /**
      * Routing Process
      */
-    $eventDispatcher->trigger(self::EVENT_ROUTE_STARTUP, null, $event);
+    $eventDispatcher->trigger(self::EVENT_ROUTE_STARTUP, $event);
     
     $this->getRouter()->route($request);
     
-    $eventDispatcher->trigger(self::EVENT_ROUTE_SHUTDOWN, null, $event);
+    $eventDispatcher->trigger(self::EVENT_ROUTE_SHUTDOWN, $event);
     
     /**
      * Dispatching Process
      */
     try {
-      do {
+      $eventDispatcher->trigger(self::EVENT_BEFORE_DISPATCH, $event);
+      
+      while (!$request->isDispatched()) {
         $command = $this->getResolver()->getCommand($request);
-  
-        $eventDispatcher->trigger(self::EVENT_BEFORE_DISPATCH, null, $event);
-  
+        
         if(!$command) {
           throw new Spark_Controller_Exception("There was no matching command for this
             Request found. Make sure the Command {$request->getCommandName()} exists", 404);
@@ -128,10 +128,9 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
         $request->setDispatched(true);
         
         $command->execute($request, $response);
-  
-        $eventDispatcher->trigger(self::EVENT_AFTER_DISPATCH, null, $event);
+      }
       
-      } while (!$request->isDispatched());
+      $eventDispatcher->trigger(self::EVENT_AFTER_DISPATCH, $event);
       
       $response->sendResponse();
       
@@ -167,9 +166,14 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     $event->setRequest($request)->setResponse($response);
     
     $request->setDispatched(true);
+
+    if (!$errorCommand instanceof Spark_Controller_CommandInterface) {
+      restore_exception_handler();
+    }
+    
     $errorCommand->execute($request, $response);
     
-    $this->getEventDispatcher()->trigger(self::EVENT_AFTER_DISPATCH, null, $event);
+    $this->getEventDispatcher()->trigger(self::EVENT_AFTER_DISPATCH, $event);
     
     $response->sendResponse();
   }
@@ -177,7 +181,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   public function getRequest()
   {
     if(is_null($this->_request)) {
-      $this->_request = Spark_Object_Manager::create("Spark_Controller_HttpRequest");
+      $this->_request = new Spark_Controller_HttpRequest;
     }
     return $this->_request;
   }
@@ -191,7 +195,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   public function getResponse()
   {
     if(is_null($this->_response)) {
-      $this->_response = Spark_Object_Manager::create("Spark_Controller_HttpResponse");
+      $this->_response = new Spark_Controller_HttpResponse;
     }
     return $this->_response;
   }
@@ -205,7 +209,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   public function getResolver()
   {
     if(is_null($this->_resolver)) {
-      $this->_resolver = Spark_Object_Manager::create("Spark_Controller_CommandResolver");
+      $this->_resolver = new Spark_Controller_CommandResolver;
     }
     return $this->_resolver;
   }
@@ -219,7 +223,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   public function getRouter()
   {
     if(is_null($this->_router)) {
-      $this->_router = Spark_Object_Manager::create("Zend_Controller_Router_Rewrite");
+      $this->_router = new Zend_Controller_Router_Rewrite;
     }
     return $this->_router;
   }
@@ -231,10 +235,14 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   
   public function addPlugin(
     Spark_Event_HandlerInterface $plugin, 
-    array $listenTo = array(self::EVENT_ROUTE_STARTUP, self::EVENT_ROUTE_SHUTDOWN, self::EVENT_BEFORE_DISPATCH, self::EVENT_AFTER_DISPATCH)
+    $listenTo = array(self::EVENT_ROUTE_STARTUP, self::EVENT_ROUTE_SHUTDOWN, self::EVENT_BEFORE_DISPATCH, self::EVENT_AFTER_DISPATCH)
   )
   {
     $eventDispatcher = $this->getEventDispatcher();
+
+    if (is_string($listenTo)) {
+      $listenTo = array($listenTo);
+    }
     
     foreach ($listenTo as $event) {
       $eventDispatcher->on($event, $plugin);
@@ -252,10 +260,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   public function getEventDispatcher()
   {
     if(is_null($this->_eventDispatcher)) {
-      throw new Spark_Controller_Exception("Spark Controller requires an "
-        . "Event Dispatcher to work. Please supply either an Instance of "
-        . "Spark_Event_Dispatcher or an object implementing the "
-        . "Spark_Event_DispatcherInterface to the setEventDispatcher() Method");
+      $this->_eventDispatcher = new Spark_Event_Dispatcher;
     }
     return $this->_eventDispatcher;
   }
