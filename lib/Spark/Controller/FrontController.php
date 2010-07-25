@@ -99,8 +99,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     
     $eventDispatcher = $this->getEventDispatcher();
     
-    $event = new Spark_Controller_Event;
-    $event->setRequest($request)->setResponse($response);
+    $event = new Spark_Controller_Event($request, $response);
     
     /**
      * Routing Process
@@ -162,8 +161,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     $request->setParam("code", $e->getCode());
     $request->setParam("exception", $e);
     
-    $event = new Spark_Controller_Event;
-    $event->setRequest($request)->setResponse($response);
+    $event = new Spark_Controller_Event($request, $response);
     
     $request->setDispatched(true);
 
