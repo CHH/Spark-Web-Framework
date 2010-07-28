@@ -22,18 +22,18 @@ interface Spark_UnifiedConstructorInterface
   /**
    * __construct()
    *
-   * @param mixed $options Usually an Array of underscored_key => value pairs 
+   * @param array $options Usually an Array of underscored_key => value pairs 
    *                       representing the options
    * @return object An instance of the class
    */
-  public function __construct($options = null);
+  public function __construct(array $options = array());
   
   /**
    * setOptions()
    *
-   * @param $options Options which should be set on the object
+   * @param array $options Options which should be set on the object
    *
    */
-  public function setOptions($options);
+  public function setOptions(array $options);
   
 }

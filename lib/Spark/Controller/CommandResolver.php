@@ -33,14 +33,14 @@ class Spark_Controller_CommandResolver
   
   protected $_moduleCommandDirectory = "commands";
   
-  public function __construct($options = null)
+  public function __construct(array $options = array())
   {
     if(!is_null($options)) {
       $this->setOptions($options);
     }
   }
   
-  public function setOptions($options)
+  public function setOptions(array $options)
   {
     Spark_Object_Options::setOptions($this, $options);
     return $this;

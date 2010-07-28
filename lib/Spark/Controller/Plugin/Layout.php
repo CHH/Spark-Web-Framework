@@ -29,7 +29,7 @@ class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
   
   protected $_disabled   = false;
   
-  public function __construct($options = null)
+  public function __construct(array $options = array())
   {
     if(!is_null($options)) {
       $this->setOptions($options);
@@ -48,7 +48,7 @@ class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
     }
   }
   
-  public function setOptions($options)
+  public function setOptions(array $options)
   {
     Spark_Object_Options::setOptions($this, $options);
     return $this;

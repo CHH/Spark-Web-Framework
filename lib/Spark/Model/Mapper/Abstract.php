@@ -32,14 +32,22 @@ abstract class Spark_Model_Mapper_Abstract
   protected $_preUpdateFilters = null;
   protected $_postUpdateFilters = null;
   
-  public function __construct()
+  final public function __construct(array $options = array())
   {    
     $this->_preSaveFilters    = new Spark_Model_FilterChain;
     $this->_postSaveFilters   = new Spark_Model_FilterChain;
     $this->_preUpdateFilters  = new Spark_Model_FilterChain;
     $this->_postUpdateFilters = new Spark_Model_FilterChain;
     
+    $this->setOptions($options);
+    
     $this->init();
+  }
+  
+  public function setOptions(array $options)
+  {
+    Spark_Object_Options::setOptions($this, $options);
+    return $this;
   }
   
   public function init()

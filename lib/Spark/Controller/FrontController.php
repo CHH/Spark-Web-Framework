@@ -60,7 +60,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   const EVENT_BEFORE_DISPATCH = "spark.controller.front_controller.before_dispatch";
   const EVENT_AFTER_DISPATCH = "spark.controller.front_controller.after_dispatch";
   
-  public function __construct($options = null)
+  public function __construct(array $options = array())
   {
     $this->setOptions($options);
   }
@@ -72,7 +72,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
    *
    * @return Spark_Controller_FrontController
    */
-  public function setOptions($options)
+  public function setOptions(array $options)
   {
     Spark_Object_Options::setOptions($this, $options);
     return $this;
