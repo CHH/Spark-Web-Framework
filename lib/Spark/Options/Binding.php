@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
-class Spark_Object_OptionBinding
+class Spark_Options_Binding
 {
   /**
    * @var array Holds the options which should be bound

@@ -17,7 +17,7 @@
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
-class Spark_Object_Options 
+class Spark_Options 
 {
   
   /**
