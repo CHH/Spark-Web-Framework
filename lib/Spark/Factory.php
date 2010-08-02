@@ -22,13 +22,13 @@ class Spark_Object_Manager
   /**
    * @var array
    */
-  static protected $_bindings = array();
+  protected $_bindings = array();
 
   /**
    * @var array
    */
-  static protected $_sharedInstances = array();
-    
+  protected $_sharedInstances = array();
+   
   /**
    * getInstance() - Returns a shared Instance of a Class, 
    *  instantiates a new Object only on first call
@@ -36,13 +36,13 @@ class Spark_Object_Manager
    * @param string $className
    * @return object
    */
-  static public function getInstance($class, array $options = array())
+  public function getInstance($class, array $options = array())
   { 
-    if(isset(self::$_sharedInstances[$class])) {
-      return self::$_sharedInstances[$class];
+    if(isset($this->_sharedInstances[$class])) {
+      return $this->_sharedInstances[$class];
     }
     
-    return self::_instantiateClass($class, $options);
+    return $this->_instantiateClass($class, $options);
   }
 
   /**
@@ -53,7 +53,7 @@ class Spark_Object_Manager
    *                     for the object constructor
    * @return object
    */
-  static protected function _instantiateClass($className, array $options = array())
+  protected function _instantiateClass($className, array $options = array())
   {
     if(!$className) {
       throw new BadMethodCallException("The first argument must contain the classname, NULL given");
@@ -65,8 +65,8 @@ class Spark_Object_Manager
       throw new InvalidArgumentException("{$className} does not implement the UnifiedConstructor Interface");
     }
     
-	  if(self::hasBinding($className)) {
-	    $defaultOptions = self::getBinding($className)->getOptions();
+	  if($this->hasBinding($className)) {
+	    $defaultOptions = $this->getBinding($className)->getOptions();
 	  } else {
 		  $defaultOptions = array();
 	  }
@@ -76,16 +76,16 @@ class Spark_Object_Manager
 	  return $class->newInstance($options);
   }
   
-  static public function bind(array $options)
+  public function bind(array $options)
   {
-    $binding = self::createBinding();
+    $binding = $this->createBinding();
     $this->addBinding($binding);
     
     $binding->bind($options);
     return $binding;
   }
   
-  static public function share($subject)
+  public function share($subject)
   {
     if (!is_string($subject) and !is_object($subject)) {
       throw new InvalidArgumentException("Supply either an Object or a Class
@@ -93,13 +93,13 @@ class Spark_Object_Manager
     }
     
     if (is_string($subject) and class_exists($subject)) {
-      $subject = self::_instantiateClass($subject);
+      $subject = $this->_instantiateClass($subject);
     }
     
-    self::$_sharedInstances[get_class($subject)] = $subject;
+    $this->_sharedInstances[get_class($subject)] = $subject;
   }
   
-  static public function shareNot($subject)
+  public function shareNot($subject)
   {
     if (!is_string($subject) and !is_object($subject)) {
       throw new InvalidArgumentException("Supply either an Object or a Class
@@ -110,7 +110,7 @@ class Spark_Object_Manager
       $subject = get_class($subject);
     }
     
-    unset(self::$_sharedInstances[$subject]);
+    unset($this->_sharedInstances[$subject]);
   }
   
   /**
@@ -118,9 +118,9 @@ class Spark_Object_Manager
    *
    * @param Spark_Object_OptionBinding $binding
    */
-  static public function addBinding(Spark_Object_OptionBinding $binding)
+  public function addBinding(Spark_Options_Binding $binding)
   {
-    self::$_bindings[$binding->getClass()] = $binding;
+    $this->_bindings[$binding->getClass()] = $binding;
   }
 
   /**
@@ -129,12 +129,12 @@ class Spark_Object_Manager
    * @param string $class
    * @return Spark_Object_OptionBinding
    */
-  static public function getBinding($class)
+  public function getBinding($class)
   {
-    if(self::hasBinding($class)) {
-      return self::$_bindings[$class];
+    if(!$this->hasBinding($class)) {
+      throw new UnexpectedValueException("No Binding was registered for class {$class}");
     }
-    return null;
+    return $this->_bindings[$class];
   }
 
   /**
@@ -143,13 +143,13 @@ class Spark_Object_Manager
    * @param string class
    * @return bool
    */
-  static public function hasBinding($class)
+  public function hasBinding($class)
   {
-    return array_key_exists($class, self::$_bindings) ? true : false;
+    return array_key_exists($class, $this->_bindings) ? true : false;
   }
   
-  static public function createBinding()
+  public function createBinding()
   {
-    return new Spark_Object_OptionBinding;
+    return new Spark_Options_Binding;
   }
 }
