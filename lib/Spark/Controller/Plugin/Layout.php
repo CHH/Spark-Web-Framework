@@ -50,7 +50,7 @@ class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
   
   public function setOptions(array $options)
   {
-    Spark_Object_Options::setOptions($this, $options);
+    Spark_Options::setOptions($this, $options);
     return $this;
   }
 

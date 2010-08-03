@@ -42,7 +42,7 @@ class Spark_Controller_CommandResolver
   
   public function setOptions(array $options)
   {
-    Spark_Object_Options::setOptions($this, $options);
+    Spark_Options::setOptions($this, $options);
     return $this;
   }
   

@@ -46,7 +46,7 @@ abstract class Spark_Model_Mapper_Abstract
   
   public function setOptions(array $options)
   {
-    Spark_Object_Options::setOptions($this, $options);
+    Spark_Options::setOptions($this, $options);
     return $this;
   }
   

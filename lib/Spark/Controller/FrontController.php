@@ -74,7 +74,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
    */
   public function setOptions(array $options)
   {
-    Spark_Object_Options::setOptions($this, $options);
+    Spark_Options::setOptions($this, $options);
     return $this;
   }
   
