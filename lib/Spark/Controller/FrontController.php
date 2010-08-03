@@ -21,7 +21,7 @@
 class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterface
 {
   /**
-   * @var Spark_Controller_RequestInterface
+   * @var Zend_Controller_Request_Abstract
    */
   protected $_request = null;
   
@@ -48,12 +48,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   /**
    * @var string
    */
-  private $_filterClass = "Spark_Controller_FilterInterface";
-  
-  /**
-   * @var string
-   */
-  private $_errorCommand = "Error";
+  private $_errorController = "Error";
   
   const EVENT_ROUTE_STARTUP = "spark.controller.front_controller.route_startup";
   const EVENT_ROUTE_SHUTDOWN = "spark.controller.front_controller.route_shutdown";
@@ -94,7 +89,7 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
    */
   public function handleRequest()
   {
-    $request = $this->getRequest();
+    $request  = $this->getRequest();
     $response = $this->getResponse();
     
     $eventDispatcher = $this->getEventDispatcher();
@@ -117,11 +112,11 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
       $eventDispatcher->trigger(self::EVENT_BEFORE_DISPATCH, $event);
       
       while (!$request->isDispatched()) {
-        $command = $this->getResolver()->getCommand($request);
+        $controller = $this->getResolver()->getInstance($request);
         
-        if(!$command) {
+        if(!$controller) {
           throw new Spark_Controller_Exception("There was no matching command for this
-            Request found. Make sure the Command {$request->getCommandName()} exists", 404);
+            Request found. Make sure the Command {$request->getControllerName()} exists", 404);
         }
   
         $request->setDispatched(true);
@@ -148,14 +143,14 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
    */
   public function handleException(Exception $e) 
   {
-    if(strpos($this->_errorCommand, "::")) {
-      $command = explode("::", $this->_errorCommand);
-      $errorCommand = $this->getResolver()->getCommandByName($command[1], $command[0]);
+    if(strpos($this->_errorController, "::")) {
+      $controller = explode("::", $this->_errorController);
+      $errorController = $this->getResolver()->getControllerByName($controller[1], $controller[0]);
     } else {
-      $errorCommand = $this->getResolver()->getCommandByName($this->_errorCommand);
+      $errorController = $this->getResolver()->getControllerByName($this->_errorController);
     }
     
-    $request = $this->getRequest();
+    $request  = $this->getRequest();
     $response = $this->getResponse();
     
     $request->setParam("code", $e->getCode());
@@ -165,11 +160,11 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     
     $request->setDispatched(true);
 
-    if (!$errorCommand instanceof Spark_Controller_CommandInterface) {
+    if (!$errorController) {
       restore_exception_handler();
     }
     
-    $errorCommand->execute($request, $response);
+    $errorController->execute($request, $response);
     
     $this->getEventDispatcher()->trigger(self::EVENT_AFTER_DISPATCH, $event);
     
@@ -207,12 +202,12 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
   public function getResolver()
   {
     if(is_null($this->_resolver)) {
-      $this->_resolver = new Spark_Controller_CommandResolver;
+      $this->_resolver = new Spark_Controller_Resolver;
     }
     return $this->_resolver;
   }
   
-  public function setResolver(Spark_Controller_CommandResolverInterface $resolver)
+  public function setResolver(Spark_Controller_ResolverInterface $resolver)
   {
     $this->_resolver = $resolver;
     return $this;
@@ -263,14 +258,14 @@ class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterf
     return $this->_eventDispatcher;
   }
   
-  public function setErrorCommand($command)
+  public function setErrorController($controller)
   {
-    $this->_errorCommand = $command;
+    $this->_errorController = $controller;
     return $this;
   }
   
-  public function getErrorCommand()
+  public function getErrorController()
   {
-    return $this->_errorCommand;
+    return $this->_errorController;
   }
 }

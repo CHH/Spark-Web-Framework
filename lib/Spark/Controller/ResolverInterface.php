@@ -1,7 +1,7 @@
 <?php
 /**
- * Interface for the Request, defines CommandName key for Request
- * 
+ * Interface for the Command Resolver used by the Front Controller
+ *
  * This source file is subject to the MIT license that is bundled
  * with this package in the file LICENSE.txt.
  *
@@ -18,16 +18,15 @@
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
-interface Spark_Controller_RequestInterface
+interface Spark_Controller_ResolverInterface
 {
   
-  public function getModuleName();
-  public function setModuleName($value);
-  
-  public function getCommandName();
-  public function setCommandName($value);
-  
-  public function getActionName();
-  public function setActionName($value);
+  /**
+   * Should resolve the request to a valid instance of CommandInterface
+   *
+   * @param  Spark_Controller_RequestInterface $request The routed Request
+   * @return Spark_Controller_CommandInterface
+   */
+  public function getInstance(Zend_Controller_Request_Abstract $request);
   
 }

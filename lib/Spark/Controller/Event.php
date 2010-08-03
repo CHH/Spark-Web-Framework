@@ -25,7 +25,7 @@ class Spark_Controller_Event extends Spark_Event_Event
   protected $_response;
 
   public function __construct(
-    Spark_Controller_RequestInterface $request,
+    Zend_Controller_Request_Abstract $request,
     Zend_Controller_Response_Abstract $response
   )
   {
@@ -33,21 +33,9 @@ class Spark_Controller_Event extends Spark_Event_Event
     $this->_response = $response;
   }
   
-  public function setRequest(Spark_Controller_RequestInterface $request)
-  {
-    $this->_request = $request;
-    return $this;
-  }
-  
   public function getRequest()
   {
     return $this->_request;
-  }
-  
-  public function setResponse(Zend_Controller_Response_Abstract $response)
-  {
-    $this->_response = $response;
-    return $this;
   }
   
   public function getResponse()

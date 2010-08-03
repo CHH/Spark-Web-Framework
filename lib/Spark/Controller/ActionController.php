@@ -20,7 +20,7 @@
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
-abstract class Spark_Controller_ActionController implements Spark_Controller_CommandInterface
+abstract class Spark_Controller_ActionController implements Spark_Controller_Controller
 {
   protected $_request;
   protected $_response;
@@ -33,7 +33,7 @@ abstract class Spark_Controller_ActionController implements Spark_Controller_Com
    * @return void
    */
   public function execute(
-    Spark_Controller_RequestInterface $request,
+    Zend_Controller_Request_Abstract  $request,
     Zend_Controller_Response_Abstract $response
   )
   {

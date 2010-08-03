@@ -17,10 +17,10 @@
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
-interface Spark_Controller_CommandInterface
+interface Spark_Controller_Controller
 {
   public function execute(
-    Spark_Controller_RequestInterface $request,
+    Zend_Controller_Request_Abstract  $request,
     Zend_Controller_Response_Abstract $response
   );
 }
