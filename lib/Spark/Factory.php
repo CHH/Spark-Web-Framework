@@ -114,7 +114,7 @@ class Spark_Factory
   }
   
   /**
-   * addBinding() - Binds a set of options to a class through an OptionBinding Object
+   * addBinding() - Binds a set of options to a class through an Option Binding Object
    *
    * @param Spark_Object_OptionBinding $binding
    */
