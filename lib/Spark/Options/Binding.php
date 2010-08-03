@@ -30,17 +30,6 @@ class Spark_Options_Binding
   protected $_className = null;
   
   /**
-   * staticBind() - Factory
-   * @param mixed $options The Options which should be bound to the class
-   * @return Spark_Object_OptionBinding
-   */
-  static public function staticBind($options)
-  {
-    $instance = new self;
-    return $instance->setOptions($options);
-  }
-  
-  /**
    * setOptions() - Setter for the Options
    * @param mixed $options
    * @return Spark_Object_OptionBinding

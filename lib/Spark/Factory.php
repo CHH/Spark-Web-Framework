@@ -6,18 +6,18 @@
  * with this package in the file LICENSE.txt.
  *
  * @category   Spark
- * @package    Spark_Object
+ * @package    Spark_Factory
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
 
 /**
  * @category   Spark
- * @package    Spark_Object
+ * @package    Spark_Factory
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
-class Spark_Object_Manager
+class Spark_Factory
 {
   /**
    * @var array
@@ -65,15 +65,15 @@ class Spark_Object_Manager
       throw new InvalidArgumentException("{$className} does not implement the UnifiedConstructor Interface");
     }
     
-	  if($this->hasBinding($className)) {
-	    $defaultOptions = $this->getBinding($className)->getOptions();
-	  } else {
-		  $defaultOptions = array();
-	  }
-	  
-	  $options = array_merge($defaultOptions, $options);
-	  
-	  return $class->newInstance($options);
+    if($this->hasBinding($className)) {
+      $defaultOptions = $this->getBinding($className)->getOptions();
+    } else {
+      $defaultOptions = array();
+    }
+
+    $options = array_merge($defaultOptions, $options);
+
+    return $class->newInstance($options);
   }
   
   public function bind(array $options)
