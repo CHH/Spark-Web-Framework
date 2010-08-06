@@ -17,17 +17,8 @@
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
-interface Spark_UnifiedConstructorInterface
-{
-  /**
-   * __construct()
-   *
-   * @param array $options Usually an Array of underscored_key => value pairs 
-   *                       representing the options
-   * @return object An instance of the class
-   */
-  public function __construct(array $options = array());
-  
+interface Spark_Configurable
+{ 
   /**
    * setOptions()
    *

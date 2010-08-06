@@ -40,13 +40,18 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
     if(!is_string($event)) {
       throw new InvalidArgumentException("The name of the event must be a string");
     }
-    
-    if(!$this->hasCallbacks($event)) 
-    {
-      $this->_registry[$event] = new Spark_Event_HandlerQueue;
+
+    if (!isset($this->_registry[$event])) {
+      $this->_registry[$event] = array();
     }
     
-    $this->_registry[$event]->enqueue($callback);
+    if ($callback instanceof Spark_Event_HandlerInterface) {
+        $callback = new Spark_Event_Handler($callback, "handleEvent");
+    } else  {
+        $callback = new Spark_Event_Handler($callback);
+    }
+    
+    array_unshift($this->_registry[$event], $callback);
     
     return $this;
   }
@@ -67,14 +72,10 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
    *
    * @return Spark_Event_Event Contains status information about the event
    */
-  public function trigger($event, $context = null, $eventObj = null)
+  public function trigger($event, $eventObj = null)
   {
     if(!is_string($event)) {
       throw new InvalidArgumentException("The name of the event must be a string");
-    }
-    
-    if($context instanceof Spark_Event_Event and is_null($eventObj)) {
-      $eventObj = $context;
     }
     
     if(is_null($eventObj)) {
@@ -82,25 +83,11 @@ class Spark_Event_Dispatcher implements Spark_Event_DispatcherInterface
     }
     
     $eventObj->setName($event);
-    $eventObj->setContext($context);
     
     if($this->hasCallbacks($event)) {
       
       foreach($this->_registry[$event] as $callback) {
-        if($callback instanceof Spark_Event_HandlerInterface) {
-          $callback->handleEvent($eventObj);
-          
-        } elseif($callback instanceof Closure) {
-          $callback($eventObj);
-          
-        } elseif(is_string($callback) and function_exists($callback)) {
-          call_user_func_array($callback, array($eventObj));
-          
-        } else {
-          throw new Spark_Event_InvalidHandlerException("The handler must be an object
-            implementing the Spark_Event_HandlerInterface, a Lamda Function, Closure or 
-            the name of a defined callback function");
-        }
+        $callback->call($eventObj);
         $eventObj->setDispatched();
       }
     }

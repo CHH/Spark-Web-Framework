@@ -19,7 +19,7 @@
  * @license    MIT License
  */
 class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
-  implements Spark_UnifiedConstructorInterface
+  implements Spark_Configurable
 {
   
   protected $_layoutName = "layout.phtml";

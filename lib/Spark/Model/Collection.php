@@ -20,6 +20,8 @@
  */
 class Spark_Model_Collection implements Iterator, ArrayAccess
 {
+  const SORT_ASC  = "asc";
+  const SORT_DESC = "desc";
   
   /**
    * @var array
@@ -54,18 +56,18 @@ class Spark_Model_Collection implements Iterator, ArrayAccess
     return $this;
   }
   
-  public function sortBy($field, $mode = "asc")
+  public function sortBy($field, $mode = self::SORT_ASC)
   {
     $mode = strtolower($mode);
     
     $this->_sortField = $field;
     
     switch($mode) {
-      case "asc":
+      case self::SORT_ASC:
         uasort($this->_data, array($this, "_sortAsc"));
       break;
       
-      case "desc":
+      case self::SORT_DESC:
         uasort($this->_data, array($this, "_sortDesc"));
       break;
     }

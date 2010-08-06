@@ -18,7 +18,7 @@
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
-class Spark_Controller_FrontController implements Spark_UnifiedConstructorInterface
+class Spark_Controller_FrontController implements Spark_Configurable
 {
   /**
    * @var Zend_Controller_Request_Abstract

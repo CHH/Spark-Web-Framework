@@ -20,7 +20,7 @@
  * @license    MIT License
  */
 class Spark_Controller_Resolver 
-  implements Spark_Controller_ResolverInterface, Spark_UnifiedConstructorInterface
+  implements Spark_Controller_ResolverInterface, Spark_Configurable
 {
   
   protected $_controllerDirectory;
