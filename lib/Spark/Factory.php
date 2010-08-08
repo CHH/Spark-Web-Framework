@@ -59,11 +59,6 @@ class Spark_Factory
       throw new BadMethodCallException("The first argument must contain the classname, NULL given");
     }
     
-    $class = new ReflectionClass($className);
-
-    if(!$class->implementsInterface("Spark_UnifiedConstructorInterface")) {
-      throw new InvalidArgumentException("{$className} does not implement the UnifiedConstructor Interface");
-    }
     
     if($this->hasBinding($className)) {
       $defaultOptions = $this->getBinding($className)->getOptions();
@@ -73,7 +68,15 @@ class Spark_Factory
 
     $options = array_merge($defaultOptions, $options);
 
-    return $class->newInstance($options);
+    $object  = new $className;
+
+    if (!$object instanceof Spark_Configurable) {
+      throw new UnexpectedValueException("Object does not implement the Configurable Interface");
+    }
+
+    $object->setOptions($options);
+    
+    return $object;
   }
   
   public function bind(array $options)
