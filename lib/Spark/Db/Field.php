@@ -1,6 +1,6 @@
 <?php
 
-class Spark_Db_Field
+class Spark_Db_Field implements Spark_Db_Comparable
 {
     protected $name;
     

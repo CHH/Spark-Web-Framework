@@ -7,12 +7,12 @@ set_include_path(LIB . PATH_SEPARATOR . get_include_path());
 
 function autoload_from_libraries($class)
 {
-  @include pear_classname_to_path($class);
+  require_once pear_classname_to_path($class);
 }
 
 function autoload_from_tests($class)
 {
-  @include TESTS . DIRECTORY_SEPARATOR . pear_classname_to_path($class);
+  require_once TESTS . DIRECTORY_SEPARATOR . pear_classname_to_path($class);
 }
 
 function pear_classname_to_path($classname)

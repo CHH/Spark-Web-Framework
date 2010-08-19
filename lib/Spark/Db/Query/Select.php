@@ -1,14 +1,7 @@
 <?php
 
-class Spark_Db_Query_Select
+class Spark_Db_Query_Select implements Spark_Db_Comparable
 {
-    const EQUAL              = "=";
-    const GREATER_THAN       = ">";
-    const LESS_THAN          = "<";
-    const GREATER_THAN_EQUAL = ">=";
-    const LESS_THAN_EQUAL    = "<=";
-    const IN                 = "IN";
-    
     protected $attribute;
     protected $value;
     protected $operator;
@@ -18,9 +11,36 @@ class Spark_Db_Query_Select
         return new self($attribute);
     }
 
-    public function __construct($attribute = null)
+    public function __construct($attribute)
     {
-        $this->_attribute = $attribute;
+        $this->attribute = $attribute;
+    }
+    
+    public function getSelect()
+    {
+        return array($this->attribute, $this->operator, $this->value);
+    }
+    
+    public function setSelect(array $select)
+    {
+        list($attribute, $operator, $value) = $select;
+        
+        $this->attribute = $attribute;
+        $this->operator  = $operator;
+        $this->value     = $value;
+        
+        return $this;
+    }
+    
+    public function setValue($value)
+    {
+        $this->value = $value;
+        return $this;
+    }
+    
+    public function getValue()
+    {
+        return $this->value;
     }
     
     public function setAttribute($attribute)
@@ -32,6 +52,11 @@ class Spark_Db_Query_Select
     public function getAttribute()
     {
         return $this->attribute;
+    }
+    
+    public function getOperator()
+    {
+        return $this->operator;
     }
     
     public function isEqual($value)

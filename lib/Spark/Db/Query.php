@@ -2,67 +2,68 @@
 
 class Spark_Db_Query
 {
-
-    const PROJECT = "PROJECT";
-    const SELECT  = "SELECT";
-    const JOIN    = "JOIN";
-    const ALIAS   = "ALIAS";
-    const AND     = "AND";
-    const OR      = "OR";
+    const SELECT_AND = "and";
+    const SELECT_OR  = "or";
     
-    protected $parts = array(
-        self::PROJECT => array(),
-        self::SELECT  => array()
-    );
-
     protected $relation;
     
-    public function __construct()
-    {}
-
+    protected $project;
+    
+    protected $select = array();
+    protected $joins  = array();
+    
+    public function __construct($relation = null)
+    {
+        $this->relation = $relation;
+    }
+    
     public function setRelation($relation)
     {
         $this->relation = $relation;
         return $this;
     }
     
-    public function setPart($part, $value)
+    public function getRelation()
     {
-        $this->_part[$part] = $value;
-        return $this;
-    }
-
-    public function getPart($part)
-    {
-        if (!isset($this->_parts[$part])) {
-            throw new InvalidArgumentException("Part {$part} is not defined");
-        }
-        return $this->_parts[$part];
+        return $this->relation;
     }
     
     public function project($projection)
     {
-        $this->setPart(self::PROJECT, new Spark_Db_Query_Project($projection));
+        $this->project = new Spark_Db_Query_Project($projection);
         return $this;
+    }
+    
+    public function getProject()
+    {
+        return $this->project;
     }
     
     public function select($selection)
     {   
-        $selects   = $this->getPart(self::SELECT);
-        $selects[] = array($selection, self::AND);
-
-        return $this->setPart(self::SELECT, $selects);
+        $this->select[] = array($selection, self::SELECT_AND);
+        return $this;
     }
-
+    
     public function orSelect($selection)
     {
-        $selects   = $this->getPart(self::SELECT);
-        $selects[] = array($selection, self::OR);
+        $this->select[] = array($selection, self::SELECT_OR);
+        return $this;
+    }
 
-        return $this->setPart(self::SELECT, $selects);
+    public function getSelect()
+    {
+        return $this->select;
+    }
+        
+    public function join($relation, $on)
+    {
+        $this->joins[] = new Spark_Db_Query_Join($relation, $on);
+        return $this;
     }
     
-    public function join($relation, $on)
-    {}
-    
+    public function getJoins()
+    {
+        return $this->joins;
+    }
 }
