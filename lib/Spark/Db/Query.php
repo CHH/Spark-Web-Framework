@@ -11,6 +11,7 @@ class Spark_Db_Query
     
     protected $select = array();
     protected $joins  = array();
+    protected $limit;
     
     public function __construct($relation = null)
     {
@@ -30,7 +31,10 @@ class Spark_Db_Query
     
     public function project($projection)
     {
-        $this->project = new Spark_Db_Query_Project($projection);
+        if (!$projection instanceof Spark_Db_Query_Project) {
+            $projection = new Spark_Db_Query_Project($projection);
+        }
+        $this->project = $projection;
         return $this;
     }
     
@@ -39,8 +43,8 @@ class Spark_Db_Query
         return $this->project;
     }
     
-    public function select($selection)
-    {   
+    public function select(Spark_Db_Query_Select $selection)
+    {
         $this->select[] = array($selection, self::SELECT_AND);
         return $this;
     }
@@ -55,7 +59,7 @@ class Spark_Db_Query
     {
         return $this->select;
     }
-        
+    
     public function join($relation, $on)
     {
         $this->joins[] = new Spark_Db_Query_Join($relation, $on);
@@ -65,5 +69,42 @@ class Spark_Db_Query
     public function getJoins()
     {
         return $this->joins;
+    }
+
+    public function take($amount)
+    {
+        if (!$this->limit instanceof Spark_Db_Query_Limit) {
+            $this->limit = new Spark_Db_Query_Limit;
+        }
+        
+        if (is_numeric($amount)) {
+            $this->limit->take($amount);
+            
+        } else if ($amount instanceof Spark_Db_Query_Limit) {
+            $this->limit = $amount;
+        }
+        
+        return $this;
+    }
+
+    public function skip($amount)
+    {
+        if (!$this->limit instanceof Spark_Db_Query_Limit) {
+            $this->limit = new Spark_Db_Query_Limit;
+        }
+
+        if (is_numeric($amount)) {
+            $this->limit->skip($amount);
+            
+        } else if ($amount instanceof Spark_Db_Query_Limit) {
+            $this->limit = $amount;
+        }
+        
+        return $this;
+    }
+
+    public function getLimit()
+    {
+        return $this->limit;
     }
 }

@@ -17,17 +17,27 @@ class Spark_Db_SqlQuery
         $project  = $query->getProject();
         $select   = $query->getSelect();
         $joins    = $query->getJoins();
+        $limit    = $query->getLimit();
         
         $sql = $this->renderSelect($project)
              . $this->renderFrom($relation)
-             . $this->renderWhere($select);
+             . $this->renderWhere($select)
+             . $this->renderLimit($limit);
         
         return $sql;
     }
     
-    protected function renderSelect(Spark_Db_Query_Project $project)
+    protected function renderSelect($project)
     {
+        if (!$project instanceof Spark_Db_Query_Project) {
+            return " *";
+        }
+        
         $attributes = $project->getAttributes();
+
+        if (!$attributes) {
+            return " *";
+        }
         
         foreach ($attributes as &$attribute) {
             if ($attribute instanceof Spark_Db_Query_Alias) {
@@ -87,6 +97,15 @@ class Spark_Db_SqlQuery
         }
         
         return " WHERE " . join(" ", $select);
+    }
+
+    public function renderLimit($limit)
+    {
+        if (!$limit instanceof Spark_Db_Query_Limit) {
+            return;
+        }
+
+        
     }
     
     public function setQuery(Weblife1_Db_Query $query)
