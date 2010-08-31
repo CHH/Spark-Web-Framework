@@ -2,31 +2,56 @@
 
 class Spark_Db_Query
 {
-    const SELECT_AND = "and";
-    const SELECT_OR  = "or";
+    const R_AND = "and";
+    const R_OR  = "or";
     
-    protected $relation;
+    const R         = "R";
+    const R_PROJECT = "R_PROJECT";
+    const R_SELECT  = "R_SELECT";
+    const R_ALIAS   = "R_ALIAS";
+    const R_JOIN    = "R_JOIN";
+    const R_TAKE    = "R_TAKE";
+    const R_SKIP    = "R_SKIP";
     
-    protected $project;
-    
-    protected $select = array();
-    protected $joins  = array();
-    protected $limit;
+    protected $tokens = array(
+        self::R_SELECT => array(),
+        self::R_JOIN   => array(),
+        self::R_TAKE   => 0,
+        self::R_SKIP   => 0
+    );
     
     public function __construct($relation = null)
     {
-        $this->relation = $relation;
+        $this->setRelation($relation);
     }
     
+    public function setToken($token, $value)
+    {
+        $this->tokens[$token] = $value;
+        return $this;
+    }
+    
+    public function getToken($token)
+    {
+        if (!isset($this->tokens[$token])) {
+            return null;
+        }
+        return $this->tokens[$token];
+    }
+    
+    public function getTokens()
+    {
+        return array_filter($this->tokens);
+    }
+        
     public function setRelation($relation)
     {
-        $this->relation = $relation;
-        return $this;
+        return $this->setToken(self::R, $relation);
     }
     
     public function getRelation()
     {
-        return $this->relation;
+        return $this->getToken(self::R);
     }
     
     public function project($projection)
@@ -34,77 +59,41 @@ class Spark_Db_Query
         if (!$projection instanceof Spark_Db_Query_Project) {
             $projection = new Spark_Db_Query_Project($projection);
         }
-        $this->project = $projection;
+        $this->setToken(self::R_PROJECT, $projection);
         return $this;
-    }
-    
-    public function getProject()
-    {
-        return $this->project;
     }
     
     public function select(Spark_Db_Query_Select $selection)
     {
-        $this->select[] = array($selection, self::SELECT_AND);
+        $this->tokens[self::R_SELECT][] = array($selection, self::R_AND);
         return $this;
     }
     
     public function orSelect($selection)
     {
-        $this->select[] = array($selection, self::SELECT_OR);
+        $this->tokens[self::R_SELECT][] = array($selection, self::R_OR);
         return $this;
-    }
-
-    public function getSelect()
-    {
-        return $this->select;
     }
     
     public function join($relation, $on)
     {
-        $this->joins[] = new Spark_Db_Query_Join($relation, $on);
-        return $this;
-    }
-    
-    public function getJoins()
-    {
-        return $this->joins;
-    }
-
-    public function take($amount)
-    {
-        if (!$this->limit instanceof Spark_Db_Query_Limit) {
-            $this->limit = new Spark_Db_Query_Limit;
-        }
-        
-        if (is_numeric($amount)) {
-            $this->limit->take($amount);
-            
-        } else if ($amount instanceof Spark_Db_Query_Limit) {
-            $this->limit = $amount;
-        }
-        
+        $this->tokens[self::R_JOIN][] = new Spark_Db_Query_Join($relation, $on);
         return $this;
     }
 
-    public function skip($amount)
+    public function take($number)
     {
-        if (!$this->limit instanceof Spark_Db_Query_Limit) {
-            $this->limit = new Spark_Db_Query_Limit;
+        if (!is_numeric($number)) {
+            throw new InvalidArgumentException("Must be a valid number");
         }
-
-        if (is_numeric($amount)) {
-            $this->limit->skip($amount);
-            
-        } else if ($amount instanceof Spark_Db_Query_Limit) {
-            $this->limit = $amount;
-        }
-        
-        return $this;
+        return $this->setToken(self::R_TAKE, $number);
     }
 
-    public function getLimit()
+    public function skip($number)
     {
-        return $this->limit;
+        if (!is_numeric($number)) {
+            throw new InvalidArgumentException("Must be a valid number");
+        }
+        return $this->setToken(self::R_SKIP, $number);        
     }
 }

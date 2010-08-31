@@ -10,13 +10,17 @@ class Spark_Db_QueryTest extends PHPUnit_Framework_TestCase
         $selectUsername = Spark_Db_Query_Select::attribute("username")->isEqual("foo");
         $selectPassword = Spark_Db_Query_Select::attribute("password")->isEqual("bar");
         
-        $query->setRelation("users")->project($project)->select($selectUsername)->select($selectPassword);
+        $query->setRelation("users")->project($project)
+              ->select($selectUsername)->select($selectPassword)
+              ->take(5)->skip(1);
         
         $sqlSelect = new Spark_Db_SqlQuery($query);
-        $assertSql = "SELECT id, username, password, first_name, last_name FROM users WHERE username=foo AND password=bar";
+        
+        $assertSql = "SELECT id, username, password, first_name, last_name " 
+                   . "FROM users "
+                   . "WHERE username=foo AND password=bar "
+                   . "LIMIT 1,5";
         
         $this->assertEquals($sqlSelect->toSql(), $assertSql);
-        $this->assertEquals($project, $query->getProject()->getAttributes());
-        $this->assertEquals(2, count($query->getSelect()));
     }
 }

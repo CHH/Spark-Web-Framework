@@ -13,22 +13,20 @@ class Spark_Db_SqlQuery
     {
         $query = $this->query;
         
-        $relation = $query->getRelation(); 
-        $project  = $query->getProject();
-        $select   = $query->getSelect();
-        $joins    = $query->getJoins();
-        $limit    = $query->getLimit();
+        $tokens = $query->getTokens();
         
-        $sql = $this->renderSelect($project)
-             . $this->renderFrom($relation)
-             . $this->renderWhere($select)
-             . $this->renderLimit($limit);
+        $sql = $this->renderSelect()
+             . $this->renderFrom()
+             . $this->renderWhere()
+             . $this->renderLimit();
         
         return $sql;
     }
     
-    protected function renderSelect($project)
+    protected function renderSelect()
     {
+        $project = $this->query->getToken(Spark_Db_Query::R_PROJECT);
+        
         if (!$project instanceof Spark_Db_Query_Project) {
             return " *";
         }
@@ -50,8 +48,10 @@ class Spark_Db_SqlQuery
         return "SELECT {$fields}";
     }
     
-    protected function renderFrom($relation)
+    protected function renderFrom()
     {
+        $relation = $this->query->getToken(Spark_Db_Query::R);
+        
         if (!$relation) {
             throw new UnexpectedValueException("No Relation set");
         }
@@ -63,8 +63,10 @@ class Spark_Db_SqlQuery
         return " FROM {$relation}";
     }
     
-    protected function renderWhere(array $select)
+    protected function renderWhere()
     {
+        $select = $this->query->getToken(Spark_Db_Query::R_SELECT);
+        
         if (!$select) {
             return;
         }
@@ -77,10 +79,10 @@ class Spark_Db_SqlQuery
             $where = $this->renderCondition($where);
             
             switch ($conjunction) {
-                case Spark_Db_Query::SELECT_OR:
+                case Spark_Db_Query::R_OR:
                     $conjunction = "OR";
                     break;
-                case Spark_Db_Query::SELECT_AND:
+                case Spark_Db_Query::R_AND:
                     /*
                      * break omitted
                      */
@@ -99,16 +101,21 @@ class Spark_Db_SqlQuery
         return " WHERE " . join(" ", $select);
     }
 
-    public function renderLimit($limit)
+    public function renderLimit()
     {
-        if (!$limit instanceof Spark_Db_Query_Limit) {
-            return;
-        }
-
+        $limit  = $this->query->getToken(Spark_Db_Query::R_TAKE);
+        $offset = $this->query->getToken(Spark_Db_Query::R_SKIP);        
         
+        if ($limit === 0) {
+            return " OFFSET " . $offset;
+        }
+        
+        $sql = " LIMIT " . $offset . "," . $limit;
+        
+        return $sql; 
     }
     
-    public function setQuery(Weblife1_Db_Query $query)
+    public function setQuery(Spark_Db_Query $query)
     {
         $this->query = $query;
         return $this;
