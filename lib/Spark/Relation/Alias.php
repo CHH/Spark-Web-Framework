@@ -1,6 +1,6 @@
 <?php
 
-class Spark_Db_Query_Alias
+class Spark_Relation_Alias
 {
     
     protected $name;

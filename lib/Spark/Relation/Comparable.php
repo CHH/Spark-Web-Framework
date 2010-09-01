@@ -1,6 +1,6 @@
 <?php
 
-interface Spark_Db_Comparable
+interface Spark_Relation_Comparable
 {
     const EQUAL              = "=";
     const GREATER_THAN       = ">";

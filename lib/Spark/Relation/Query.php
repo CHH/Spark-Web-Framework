@@ -1,6 +1,6 @@
 <?php
 
-class Spark_Db_Query
+class Spark_Relation_Query
 {
     const R_AND = "and";
     const R_OR  = "or";
@@ -56,14 +56,14 @@ class Spark_Db_Query
     
     public function project($projection)
     {
-        if (!$projection instanceof Spark_Db_Query_Project) {
-            $projection = new Spark_Db_Query_Project($projection);
+        if (!$projection instanceof Spark_Relation_Project) {
+            $projection = new Spark_Relation_Project($projection);
         }
         $this->setToken(self::R_PROJECT, $projection);
         return $this;
     }
     
-    public function select(Spark_Db_Query_Select $selection)
+    public function select($selection)
     {
         $this->tokens[self::R_SELECT][] = array($selection, self::R_AND);
         return $this;
@@ -77,7 +77,7 @@ class Spark_Db_Query
     
     public function join($relation, $on)
     {
-        $this->tokens[self::R_JOIN][] = new Spark_Db_Query_Join($relation, $on);
+        $this->tokens[self::R_JOIN][] = new Spark_Relation_Join($relation, $on);
         return $this;
     }
 

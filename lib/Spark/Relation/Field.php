@@ -1,6 +1,6 @@
 <?php
 
-class Spark_Db_Field implements Spark_Db_Comparable
+class Spark_Relation_Field implements Spark_Relation_Comparable
 {
     protected $name;
     
@@ -46,6 +46,6 @@ class Spark_Db_Field implements Spark_Db_Comparable
     
     protected function getSelect()
     {
-        return new Spark_Db_Query_Select($this);
+        return new Spark_Relation_Query_Select($this);
     }
 }

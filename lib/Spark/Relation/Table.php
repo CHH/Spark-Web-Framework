@@ -1,6 +1,6 @@
 <?php
 
-class Spark_Db_Table
+class Spark_Relation_Table
 {   
     protected $name;
 
@@ -18,7 +18,7 @@ class Spark_Db_Table
     
     public function query()
     {
-        $query = new Spark_Db_Query;
+        $query = new Spark_Relation_Query;
         $query->setRelation($this);
         return $query;
     }
@@ -26,7 +26,7 @@ class Spark_Db_Table
     public function __get($field)
     {
         if (!isset($this->fields[$field])) {
-            $this->fields[$field] = new Spark_Db_Field($field);
+            $this->fields[$field] = new Spark_Relation_Field($field);
         }
         return $this->fields[$field];
     }

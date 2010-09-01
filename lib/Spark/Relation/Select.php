@@ -1,6 +1,6 @@
 <?php
 
-class Spark_Db_Query_Select implements Spark_Db_Comparable
+class Spark_Relation_Select implements Spark_Relation_Comparable
 {
     protected $attribute;
     protected $value;
@@ -10,7 +10,45 @@ class Spark_Db_Query_Select implements Spark_Db_Comparable
     {
         return new self($attribute);
     }
-
+    
+    /**
+     * Parse select string in form of "<attribute> <operator> ?", e.g. id = ?
+     * and return an selection object
+     *
+     * @param  string $string 
+     * @param  mixed  $value
+     * @return Spark_Relation_Query_Select
+     */
+    public static function parseString($string, $value)
+    {   
+        $search = array(
+            self::EQUAL,
+            self::GREATER_THAN,
+            self::GREATER_THAN_EQUAL,
+            self::LESS_THAN,
+            self::LESS_THAN_EQUAL,
+            self::IN
+        );
+        
+        foreach ($search as $s) {
+            $attribute = rtrim(substr($string, 0, strpos($string, $s)));
+            
+            if ($attribute) {
+                break;
+            }
+        }
+        
+        foreach ($search as $s) {
+            $operator = trim(substr($string, strpos($string, $s), strrpos($string, $s) - strlen($s)));
+           
+            if (in_array($operator, $search)) {
+                break;
+            }
+        }
+        
+        return static::attribute($attribute)->compare($operator, $value);
+    }
+    
     public function __construct($attribute)
     {
         $this->attribute = $attribute;

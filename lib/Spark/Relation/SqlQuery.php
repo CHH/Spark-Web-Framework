@@ -1,10 +1,10 @@
 <?php
 
-class Spark_Db_SqlQuery
+class Spark_Relation_SqlQuery
 {
     protected $query;
     
-    public function __construct(Spark_Db_Query $query)
+    public function __construct(Spark_Relation_Query $query)
     {
         $this->query = $query;
     }
@@ -25,9 +25,9 @@ class Spark_Db_SqlQuery
     
     protected function renderSelect()
     {
-        $project = $this->query->getToken(Spark_Db_Query::R_PROJECT);
+        $project = $this->query->getToken(Spark_Relation_Query::R_PROJECT);
         
-        if (!$project instanceof Spark_Db_Query_Project) {
+        if (!$project instanceof Spark_Relation_Project) {
             return " *";
         }
         
@@ -38,7 +38,7 @@ class Spark_Db_SqlQuery
         }
         
         foreach ($attributes as &$attribute) {
-            if ($attribute instanceof Spark_Db_Query_Alias) {
+            if ($attribute instanceof Spark_Relation_Alias) {
                 $attribute = $attribute->getName() . " AS " . $attribute->getAlias();
             }
         }
@@ -50,7 +50,7 @@ class Spark_Db_SqlQuery
     
     protected function renderFrom()
     {
-        $relation = $this->query->getToken(Spark_Db_Query::R);
+        $relation = $this->query->getToken(Spark_Relation_Query::R);
         
         if (!$relation) {
             throw new UnexpectedValueException("No Relation set");
@@ -65,7 +65,7 @@ class Spark_Db_SqlQuery
     
     protected function renderWhere()
     {
-        $select = $this->query->getToken(Spark_Db_Query::R_SELECT);
+        $select = $this->query->getToken(Spark_Relation_Query::R_SELECT);
         
         if (!$select) {
             return;
@@ -79,10 +79,10 @@ class Spark_Db_SqlQuery
             $where = $this->renderCondition($where);
             
             switch ($conjunction) {
-                case Spark_Db_Query::R_OR:
+                case Spark_Relation_Query::R_OR:
                     $conjunction = "OR";
                     break;
-                case Spark_Db_Query::R_AND:
+                case Spark_Relation_Query::R_AND:
                     /*
                      * break omitted
                      */
@@ -103,8 +103,8 @@ class Spark_Db_SqlQuery
 
     public function renderLimit()
     {
-        $limit  = $this->query->getToken(Spark_Db_Query::R_TAKE);
-        $offset = $this->query->getToken(Spark_Db_Query::R_SKIP);        
+        $limit  = $this->query->getToken(Spark_Relation_Query::R_TAKE);
+        $offset = $this->query->getToken(Spark_Relation_Query::R_SKIP);        
         
         if ($limit === 0) {
             return " OFFSET " . $offset;
@@ -115,7 +115,7 @@ class Spark_Db_SqlQuery
         return $sql; 
     }
     
-    public function setQuery(Spark_Db_Query $query)
+    public function setQuery(Spark_Relation_Query $query)
     {
         $this->query = $query;
         return $this;
@@ -126,28 +126,28 @@ class Spark_Db_SqlQuery
         return $this->query;
     }
     
-    protected function renderCondition(Spark_Db_Query_Select $where)
+    protected function renderCondition(Spark_Relation_Select $where)
     {
         $value    = $where->getValue();
         $operator = $where->getOperator();
         
         switch ($operator) {
-            case Spark_Db_Comparable::EQUAL:
+            case Spark_Relation_Comparable::EQUAL:
                 $operator = "=";
                 break;
-            case Spark_Db_Comparable::GREATER_THAN:
+            case Spark_Relation_Comparable::GREATER_THAN:
                 $operator = ">";
                 break;
-            case Spark_Db_Comparable::GREATER_THAN_EQUAL:
+            case Spark_Relation_Comparable::GREATER_THAN_EQUAL:
                 $operator = ">=";
                 break;
-            case Spark_Db_Comparable::LESS_THAN:
+            case Spark_Relation_Comparable::LESS_THAN:
                 $operator = "<";
                 break;
-            case Spark_Db_Comparable::LESS_THAN_EQUAL:
+            case Spark_Relation_Comparable::LESS_THAN_EQUAL:
                 $operator = "<=";
                 break;
-            case Spark_Db_Comparable::IN:
+            case Spark_Relation_Comparable::IN:
                 $operator = "IN ";
                 $value    = "(" . join(",", $value) . ")";
                 break;

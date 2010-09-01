@@ -1,6 +1,6 @@
 <?php
 
-class Spark_Db_Query_Project
+class Spark_Relation_Project
 {
     protected $attributes = array();
 
