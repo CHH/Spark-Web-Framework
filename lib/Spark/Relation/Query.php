@@ -1,6 +1,6 @@
 <?php
 
-class Spark_Relation_Query
+class Spark_Relation_Query implements IteratorAggregate
 {
     const R_AND = "and";
     const R_OR  = "or";
@@ -20,9 +20,15 @@ class Spark_Relation_Query
         self::R_SKIP   => 0
     );
     
-    public function __construct($relation = null)
+    public function __construct(Spark_Relation_Relation $relation = null)
     {
         $this->setRelation($relation);
+    }
+    
+    public function getIterator()
+    {
+        $this->relation->setQuery($this);
+        return $this->relation;
     }
     
     public function setToken($token, $value)
@@ -44,7 +50,7 @@ class Spark_Relation_Query
         return array_filter($this->tokens);
     }
         
-    public function setRelation($relation)
+    public function setRelation(Spark_Relation_Relation $relation)
     {
         return $this->setToken(self::R, $relation);
     }
@@ -63,8 +69,14 @@ class Spark_Relation_Query
         return $this;
     }
     
-    public function select($selection)
+    public function select($selection, $value = null)
     {
+        if (is_string($selection) and $value !== null) {
+            $selection = Spark_Relation_Select::parseString($selection, $value);
+        }
+        if (!$selection instanceof Spark_Relation_Select) {
+            throw new InvalidArgumentException("No valid arguments for a selection given");
+        }
         $this->tokens[self::R_SELECT][] = array($selection, self::R_AND);
         return $this;
     }

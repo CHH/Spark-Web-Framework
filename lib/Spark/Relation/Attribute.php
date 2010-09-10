@@ -1,6 +1,6 @@
 <?php
 
-class Spark_Relation_Field implements Spark_Relation_Comparable
+class Spark_Relation_Attribute implements Spark_Relation_Comparable
 {
     protected $name;
     

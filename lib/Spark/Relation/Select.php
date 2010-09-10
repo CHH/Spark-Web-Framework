@@ -39,8 +39,8 @@ class Spark_Relation_Select implements Spark_Relation_Comparable
         }
         
         foreach ($search as $s) {
-            $operator = trim(substr($string, strpos($string, $s), strrpos($string, $s) - strlen($s)));
-           
+            $operator = trim(substr($string, strpos($string, $s), strlen($s)));
+            
             if (in_array($operator, $search)) {
                 break;
             }
