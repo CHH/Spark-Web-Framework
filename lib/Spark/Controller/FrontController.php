@@ -104,34 +104,37 @@ class Spark_Controller_FrontController implements Spark_Configurable
     $this->getRouter()->route($request);
     
     $eventDispatcher->trigger(self::EVENT_ROUTE_SHUTDOWN, $event);
-    
-    /**
+
+    /*
      * Dispatching Process
      */
-    try {
-      $eventDispatcher->trigger(self::EVENT_BEFORE_DISPATCH, $event);
-      
-      while (!$request->isDispatched()) {
-        $controller = $this->getResolver()->getInstance($request);
-        
-        if(!$controller) {
-          throw new Spark_Controller_Exception("There was no matching command for this
+    $eventDispatcher->trigger(self::EVENT_BEFORE_DISPATCH, $event);
+    
+    $this->dispatch($request, $response);
+    
+    $eventDispatcher->trigger(self::EVENT_AFTER_DISPATCH, $event);
+
+    $response->sendResponse();
+    return $this;
+  }
+
+  protected function dispatch($request, $response)
+  {
+    $controller = $this->getResolver()->getInstance($request);
+
+    if(!$controller) {
+        throw new Spark_Controller_Exception("There was no matching command for this
             Request found. Make sure the Command {$request->getControllerName()} exists", 404);
-        }
-  
-        $request->setDispatched(true);
-        
-        $command->execute($request, $response);
-      }
-      
-      $eventDispatcher->trigger(self::EVENT_AFTER_DISPATCH, $event);
-      
-      $response->sendResponse();
-      
-    } catch(Exception $e) {
-      $this->handleException($e);
     }
     
+    $request->setDispatched(true);
+    
+    $controller->execute($request, $response);
+
+    if (!$request->isDispatched()) {
+      return $this->dispatch($request, $response);
+    }
+    return $this;
   }
   
   /**
@@ -141,34 +144,39 @@ class Spark_Controller_FrontController implements Spark_Configurable
    *
    * @param Exception $e
    */
-  public function handleException(Exception $e) 
+  public function handleException(Exception $exception) 
   {
-    if(strpos($this->_errorController, "::")) {
-      $controller = explode("::", $this->_errorController);
-      $errorController = $this->getResolver()->getControllerByName($controller[1], $controller[0]);
+    if(is_array($this->_errorController)) {
+      list($module, $controller) = $this->_errorController;
     } else {
-      $errorController = $this->getResolver()->getControllerByName($this->_errorController);
+      $controller = $this->_errorController;
+      $module     = null;
     }
     
     $request  = $this->getRequest();
     $response = $this->getResponse();
-    
-    $request->setParam("code", $e->getCode());
-    $request->setParam("exception", $e);
-    
-    $event = new Spark_Controller_Event($request, $response);
-    
-    $request->setDispatched(true);
 
-    if (!$errorController) {
+    $request->setControllerName($controller);
+    $request->setModuleName($module);
+    
+    $request->setParam("code", $exception->getCode());
+    $request->setParam("exception", $exception);
+    
+    $response->clearBody();
+    
+    try {
+      $this->dispatch($request, $response);
+      $this->getEventDispatcher()
+           ->trigger(self::EVENT_AFTER_DISPATCH, new Spark_Controller_Event($request, $response));
+
+      $response->sendResponse();
+      
+      return $this;
+
+    } catch (Exception $e) {
       restore_exception_handler();
+      throw $e;
     }
-    
-    $errorController->execute($request, $response);
-    
-    $this->getEventDispatcher()->trigger(self::EVENT_AFTER_DISPATCH, $event);
-    
-    $response->sendResponse();
   }
   
   public function getRequest()
