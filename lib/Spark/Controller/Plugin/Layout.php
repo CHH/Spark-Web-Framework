@@ -18,22 +18,30 @@
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
-class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
+class Spark_Controller_Plugin_Layout 
+  extends Spark_Controller_PluginAbstract
   implements Spark_Configurable
 {
   
-  protected $_layoutName = "layout.phtml";
-  protected $_layoutPath = null;
+  protected $_layoutName;
+  protected $_layoutPath;
+  protected $_layout;
   
-  protected $_layout     = null;
-  
-  protected $_disabled   = false;
+  protected $_disabled = false;
+
+  protected $defaults = array(
+    "layout_name" => "layout.phtml",
+  );
   
   public function __construct(array $options = array())
   {
-    if(!is_null($options)) {
-      $this->setOptions($options);
-    }
+    $this->setOptions(array_merge($this->defaults, $options));
+  }
+
+  public function setOptions(array $options)
+  {
+    Spark_Options::setOptions($this, $options);
+    return $this;
   }
   
   public function afterDispatch($request, $response)
@@ -46,12 +54,6 @@ class Spark_Controller_Plugin_Layout extends Spark_Controller_PluginAbstract
       
       $response->setBody($layout->render($this->_layoutName));
     }
-  }
-  
-  public function setOptions(array $options)
-  {
-    Spark_Options::setOptions($this, $options);
-    return $this;
   }
 
   public function setLayoutName($layoutName)
