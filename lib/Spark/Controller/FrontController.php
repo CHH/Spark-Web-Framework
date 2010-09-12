@@ -120,6 +120,10 @@ class Spark_Controller_FrontController implements Spark_Configurable
 
   protected function dispatch($request, $response)
   {
+    if ($request->isDispatched()) {
+      return $this;
+    }
+    
     $controller = $this->getResolver()->getInstance($request);
 
     if(!$controller) {
