@@ -19,7 +19,7 @@
  * @license    MIT License
  */
 class Spark_Controller_Plugin_Layout 
-  extends Spark_Controller_PluginAbstract
+  extends Spark_Controller_AbstractPlugin
   implements Spark_Configurable
 {
   

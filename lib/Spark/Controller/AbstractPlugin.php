@@ -18,7 +18,7 @@
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
-abstract class Spark_Controller_PluginAbstract implements Spark_Event_HandlerInterface
+abstract class Spark_Controller_AbstractPlugin implements Spark_Event_HandlerInterface
 {
   
   final public function handleEvent($event)

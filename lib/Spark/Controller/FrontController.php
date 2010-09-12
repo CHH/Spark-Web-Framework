@@ -31,7 +31,7 @@ class Spark_Controller_FrontController implements Spark_Configurable
   protected $_response = null;
   
   /**
-   * @var Spark_Controller_CommandResolverInterface
+   * @var Spark_Controller_Resolver
    */
   protected $_resolver = null;
   
@@ -214,12 +214,12 @@ class Spark_Controller_FrontController implements Spark_Configurable
   public function getResolver()
   {
     if(is_null($this->_resolver)) {
-      $this->_resolver = new Spark_Controller_Resolver;
+      $this->_resolver = new Spark_Controller_StandardResolver;
     }
     return $this->_resolver;
   }
   
-  public function setResolver(Spark_Controller_ResolverInterface $resolver)
+  public function setResolver(Spark_Controller_Resolver $resolver)
   {
     $this->_resolver = $resolver;
     return $this;
