@@ -54,6 +54,11 @@ class Spark_Registry implements Countable, IteratorAggregate
         return isset($this->registry[$key]);
     }
     
+    public function toArray()
+    {
+        return $this->registry;
+    }
+    
     public function getIterator()
     {
         return new ArrayIterator($this->registry);
