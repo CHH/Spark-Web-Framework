@@ -44,7 +44,7 @@ class Spark_Controller_Plugin_Layout
     return $this;
   }
   
-  public function afterDispatch($request, $response)
+  public function postDispatch($request, $response)
   {
     if(!$this->_disabled) {
       $body = $response->getBody();

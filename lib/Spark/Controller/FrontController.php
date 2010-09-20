@@ -50,10 +50,10 @@ class Spark_Controller_FrontController implements Spark_Configurable
    */
   private $_errorController = "Error";
   
-  const EVENT_ROUTE_STARTUP = "spark.controller.front_controller.route_startup";
+  const EVENT_ROUTE_STARTUP  = "spark.controller.front_controller.route_startup";
   const EVENT_ROUTE_SHUTDOWN = "spark.controller.front_controller.route_shutdown";
-  const EVENT_BEFORE_DISPATCH = "spark.controller.front_controller.before_dispatch";
-  const EVENT_AFTER_DISPATCH = "spark.controller.front_controller.after_dispatch";
+  const EVENT_PRE_DISPATCH   = "spark.controller.front_controller.pre_dispatch";
+  const EVENT_POST_DISPATCH  = "spark.controller.front_controller.post_dispatch";
   
   public function __construct(array $options = array())
   {
@@ -108,11 +108,11 @@ class Spark_Controller_FrontController implements Spark_Configurable
     /*
      * Dispatching Process
      */
-    $eventDispatcher->trigger(self::EVENT_BEFORE_DISPATCH, $event);
+    $eventDispatcher->trigger(self::EVENT_PRE_DISPATCH, $event);
     
     $this->dispatch($request, $response);
     
-    $eventDispatcher->trigger(self::EVENT_AFTER_DISPATCH, $event);
+    $eventDispatcher->trigger(self::EVENT_POST_DISPATCH, $event);
 
     $response->sendResponse();
     return $this;
@@ -171,7 +171,7 @@ class Spark_Controller_FrontController implements Spark_Configurable
     try {
       $this->dispatch($request, $response);
       $this->getEventDispatcher()
-           ->trigger(self::EVENT_AFTER_DISPATCH, new Spark_Controller_Event($request, $response));
+           ->trigger(self::EVENT_POST_DISPATCH, new Spark_Controller_Event($request, $response));
 
       $response->sendResponse();
       
@@ -240,7 +240,7 @@ class Spark_Controller_FrontController implements Spark_Configurable
   
   public function addPlugin(
     Spark_Event_HandlerInterface $plugin, 
-    $listenTo = array(self::EVENT_ROUTE_STARTUP, self::EVENT_ROUTE_SHUTDOWN, self::EVENT_BEFORE_DISPATCH, self::EVENT_AFTER_DISPATCH)
+    $listenTo = array(self::EVENT_ROUTE_STARTUP, self::EVENT_ROUTE_SHUTDOWN, self::EVENT_PRE_DISPATCH, self::EVENT_POST_DISPATCH)
   )
   {
     $eventDispatcher = $this->getEventDispatcher();
