@@ -19,7 +19,7 @@
  * @license    MIT License
  */
 class Spark_Controller_Plugin_Layout 
-  extends Spark_Controller_PluginAbstract
+  extends Spark_Controller_AbstractPlugin
   implements Spark_Configurable
 {
   
@@ -44,7 +44,7 @@ class Spark_Controller_Plugin_Layout
     return $this;
   }
   
-  public function afterDispatch($request, $response)
+  public function postDispatch($request, $response)
   {
     if(!$this->_disabled) {
       $body = $response->getBody();

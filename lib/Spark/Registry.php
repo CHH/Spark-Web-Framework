@@ -1,12 +1,13 @@
 <?php
 /**
- * Spark Framework
- * 
+ * Provides an embeddable registry class
+ *
  * This source file is subject to the MIT license that is bundled
  * with this package in the file LICENSE.txt.
  *
  * @category   Spark
  * @package    Spark_Registry
+ * @author     Christoph Hochstrasser <christoph.hochstrasser@gmail.com>
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
@@ -17,47 +18,54 @@
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
-class Spark_Registry
+class Spark_Registry implements Countable, IteratorAggregate
 {
-  /**
-   * @var array
-   */
-  static protected $_registry = array();
-
-  /**
-   * set() - Sets a key in the Registry
-   * 
-   * @param string $key
-   * @param mixed  $value
-   */
-  static public function set($key, $value)
-  {
-    self::$_registry[$key] = $value;
-  }
-
-  /**
-   * get() - Returns the value stored under the given key
-   *
-   * @param string $key
-   * @return mixed
-   */
-  static public function get($key)
-  {
-    if(self::has($key)) {
-      return self::$_registry[$key];
+    protected $registry = array();
+    
+    public function __construct(Array $registry = array())
+    {
+        $this->registry = $registry;
     }
-    return null;
-  }
-
-  /**
-   * has() - Checks if a key is set in the Registry
-   *
-   * @param $key
-   * @return bool
-   */
-  static public function has($key)
-  {
-    return array_key_exists($key, self::$_registry) ? true : false;
-  }
-  
+    
+    public function set($key, $value)
+    {
+        if (!is_string($key) or empty($key)) {
+            throw new InvalidArgumentException("Key must be a string "
+                . gettype($key) . " given");
+        }
+        $this->registry[$key] = $value;
+        return $this;
+    }
+    
+    public function get($key)
+    {
+        if (!$this->has($key)) {
+            throw new InvalidArgumentException("Undefined key {$key}");
+        }
+        return $this->registry[$key];
+    }
+    
+    public function has($key)
+    {
+        if (!is_string($key) or empty($key)) {
+            throw new InvalidArgumentException("Key must be a string "
+                . gettype($key) . " given");
+        }
+        return isset($this->registry[$key]);
+    }
+    
+    public function toArray()
+    {
+        return $this->registry;
+    }
+    
+    public function getIterator()
+    {
+        return new ArrayIterator($this->registry);
+    }
+    
+    public function count()
+    {
+        return count($this->registry);
+    }
 }

@@ -58,24 +58,13 @@ class Spark_Event_Handler
      */
     public function call(Spark_Event_Event $event)
     {
-        $callback = $this->getCallback();
-        return $callback($event);
-    }
-
-    /** 
-     * Returns the Callback, callable as Closure
-     *
-     * @return Closure
-     */
-    public function getCallback()
-    {
         $callback = $this->_callback;
         
-        if ($callback instanceof Closure) {
-            return $callback;
+        if (is_array($callback)) {
+            return call_user_func_array($callback, array($event));
+        } else if ($callback instanceof Closure) {
+            return $callback($event);
         }
-        return function() use ($callback) {
-            return call_user_func_array($callback, func_get_args());
-        };
+        throw new RuntimeException("No valid callback set");
     }
 }
