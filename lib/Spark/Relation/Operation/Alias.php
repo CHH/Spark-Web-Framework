@@ -1,12 +1,11 @@
 <?php
 
-class Spark_Relation_Alias
+class Spark_Relation_Operation_Alias extends Spark_Relation_AbstractVerb
 {
-    
     protected $name;
     protected $alias;
     
-    public function __construct($name, $alias)
+    public function direct($name, $alias)
     {
         $this->name  = $name;
         $this->alias = $alias;
