@@ -2,26 +2,45 @@
 
 class Spark_RegistryTest extends PHPUnit_Framework_Testcase
 {
-  
-  public function testSet()
-  {
-    $value = "Foo";
+    protected $registry;
+
+    public function setUp()
+    {
+        $this->registry = new Spark_Registry();
+    }
     
-    Spark_Registry::set("foo", $value);
-    
-    $this->assertTrue(Spark_Registry::has("foo"));
-    
-    return $value;
-  }
-  
-  /**
-   * @depends testSet
-   */
-  public function testGet($expected)
-  {
-    $actual = Spark_Registry::get("foo");
-    
-    $this->assertEquals($expected, $actual);
-  }
-  
+    public function getTestData()
+    {
+        $object = new stdClass;
+        $object->key1 = "value1";
+        $object->key2 = "value2";
+        
+        return array(
+            array("key1", "value1"),
+            array("key2", $object),
+            array("key3", array("foo", "bar", "baz"))
+        );
+    }
+
+    /**
+     * @dataProvider getTestData
+     */
+    public function testNonStatic($key, $value)
+    {
+        $this->registry->set($key, $value);
+        
+        $this->assertTrue($this->registry->has($key));
+        $this->assertEquals($value, $this->registry->get($key));
+    }
+
+    /** 
+     * @dataProvider getTestData
+     */
+    public function staticSet($key, $value)
+    {
+        Spark_StaticRegistry::set($key, $value);
+
+        $this->assertTrue(Spark_StaticRegistry::has($key));
+        $this->assertEquals($value, Spark_StaticRegistry::get($key));
+    }
 }
