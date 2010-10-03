@@ -2,6 +2,9 @@
 
 interface Spark_Relation_Comparable
 {
+    const C_AND              = "AND";
+    const C_OR               = "OR";
+        
     const EQUAL              = "=";
     const GREATER_THAN       = ">";
     const LESS_THAN          = "<";

@@ -1,7 +1,11 @@
 <?php
 
-class Spark_Relation_Select implements Spark_Relation_Comparable
+class Spark_Relation_Operation_Select 
+    extends Spark_Relation_AbstractVerb 
+    implements Spark_Relation_Comparable
 {
+    protected $conjunction = self::C_AND;
+    
     protected $attribute;
     protected $value;
     protected $operator;
@@ -21,6 +25,13 @@ class Spark_Relation_Select implements Spark_Relation_Comparable
      */
     public static function parseString($string, $value)
     {   
+        list($attribute, $operator) = self::_parseString($string);
+        
+        return static::attribute($attribute)->compare($operator, $value);
+    }
+
+    protected static _parseString($string)
+    {
         $search = array(
             self::EQUAL,
             self::GREATER_THAN,
@@ -45,13 +56,23 @@ class Spark_Relation_Select implements Spark_Relation_Comparable
                 break;
             }
         }
-        
-        return static::attribute($attribute)->compare($operator, $value);
+
+        return array($attribute, $operator);
     }
     
-    public function __construct($attribute)
+    public function direct($expression, $value = null)
     {
-        $this->attribute = $attribute;
+        if (is_string($expression)) {
+            list($attribute, $operator) = self::_parseString($expression);
+
+            $this->attribute = $attribute;
+            $this->operator  = $operator;
+            $this->value     = $value;
+            
+        } else if (is_array($expression)) {
+            $this->setSelect($expression);
+        }
+        throw new InvalidArgumentException("Expression must either be a string or an array");
     }
     
     public function getSelect()
@@ -68,6 +89,17 @@ class Spark_Relation_Select implements Spark_Relation_Comparable
         $this->value     = $value;
         
         return $this;
+    }
+
+    public function setConjunction($conjunction)
+    {
+        $this->conjunction = $conjunction;
+        return $this;
+    }
+    
+    public function getConjunction()
+    {
+        return $this->conjunction;
     }
     
     public function setValue($value)

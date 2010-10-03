@@ -1,29 +1,61 @@
 <?php
 
-class Spark_Relation_SqlQuery
+class Spark_Relation_ToSql extends Spark_Relation_AbstractVerb
 {
-    protected $query;
+    protected $aggregatedVerbs  = array();
+
+    protected $formatters;
     
-    public function __construct(Spark_Relation_Query $query)
+    public function direct()
     {
-        $this->query = $query;
+        $this->formatters = new Spark_Relation_ExtensionLoader(array(
+            "select" => "Spark_Relation_Sql_Select",
+            "where"  => "Spark_Relation_Sql_Where",
+            "limit"  => "Spark_Relation_Sql_Limit",
+        ));
+        $this->formatters->setShareInstances(true);
     }
     
     public function toSql()
     {
-        $query = $this->query;
+        if (!$this->getPrevious()) {
+            throw new InvalidArgumentException("You cannot produce a query without verbs");
+        }
         
-        $tokens = $query->getTokens();
-        
-        $sql = $this->renderSelect()
-             . $this->renderFrom()
-             . $this->renderWhere()
-             . $this->renderLimit();
+        $this->aggregate($this->getPrevious());
         
         return $sql;
     }
     
-    protected function renderSelect()
+    protected function aggregate(Spark_Relation_AbstractVerb $verb)
+    {
+        $className = get_class($verb);
+
+        if (!isset($this->aggregatedVerbs[$className])) {
+            $this->aggregatedVerbs[$className] = array();
+        }
+        
+        $this->aggregatedVerbs[$className][] = $verb;
+
+        if (!$previous = $verb->getPrevious()) {
+            return;
+        }
+        return $this->aggregate($previous);
+    }
+    
+    protected function getSelects()
+    {
+        $project = current($this->aggregatedVerbs["Spark_Relation_Operation_Project"]);
+        $select  = $this->formatters->getInstance("select")->toSql($project);
+        return $select;
+    }
+
+    protected function getWheres()
+    {
+        
+    }
+    
+    protected function renderSelect(Spark_Relation_Project $project)
     {
         $project = $this->query->getToken(Spark_Relation_Query::R_PROJECT);
         
@@ -157,6 +189,18 @@ class Spark_Relation_SqlQuery
         
         return $where->getAttribute() . $operator . $value;
     } 
+
+    public function registerFormatter($shortName, $className)
+    {
+        $this->formatters->register($shortName, $className);
+        return $this;
+    }
+    
+    public function unregisterFormatter($shortName)
+    {
+        $this->formatters->unregister($shortName);
+        return $this;
+    }
     
     public function __toString()
     {
