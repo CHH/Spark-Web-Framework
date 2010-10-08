@@ -29,16 +29,16 @@ abstract class Spark_Relation_AbstractVerb
     {
         return $this->previous;
     }
-
-    public function direct()
-    {}
     
     public function __call($verb, Array $args)
     {
         $nextVerb = $this->operators->getInstance($verb);
-        
+        $nextVerb->setPrevious($this);
         if (!$nextVerb instanceof Spark_Relation_AbstractVerb) {
             throw new UnexpectedValueException("Verb is no instance of AbstractVerb");
+        }
+        if (!is_callable(array($nextVerb, "direct"))) {
+            throw new BadMethodCallException("Extension must implement the direct() method");
         }
         call_user_func_array(array($nextVerb, "direct"), $args);
         

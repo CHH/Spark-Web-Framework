@@ -9,7 +9,6 @@ class Spark_Relation_ExtensionLoader
     public function __construct(Array $shortNames = array())
     {
         $this->shortNames = $shortNames;
-        $this->instances  = new Spark_Registry;
     }
 
     public function setShareInstances($shareInstances = true)

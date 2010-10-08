@@ -8,11 +8,6 @@ class Spark_Relation_Attribute implements Spark_Relation_Comparable
     {
         $this->name = $name;
     }
-
-    public function getName()
-    {
-        return $this->name;
-    }
     
     public function isEqual($value)
     {
@@ -42,6 +37,11 @@ class Spark_Relation_Attribute implements Spark_Relation_Comparable
     public function isIn(array $values)
     {
         return $this->getSelect()->isIn($values);
+    }
+    
+    public function __toString()
+    {
+        return $this->name;
     }
     
     protected function getSelect()

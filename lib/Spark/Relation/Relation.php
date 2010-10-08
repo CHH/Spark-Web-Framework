@@ -1,14 +1,7 @@
 <?php
 
 interface Spark_Relation_Relation
-{
-    /**
-     * Returns the Name of the relation, used to create queries
-     *
-     * @return string
-     */
-    public function getName();
-    
+{   
     /**
      * Creates a projection of the relation
      *

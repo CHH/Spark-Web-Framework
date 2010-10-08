@@ -30,7 +30,7 @@ class Spark_Relation_Operation_Select
         return static::attribute($attribute)->compare($operator, $value);
     }
 
-    protected static _parseString($string)
+    protected static function _parseString($string)
     {
         $search = array(
             self::EQUAL,
@@ -71,8 +71,9 @@ class Spark_Relation_Operation_Select
             
         } else if (is_array($expression)) {
             $this->setSelect($expression);
+        } else {
+            throw new InvalidArgumentException("Expression must either be a string or an array");
         }
-        throw new InvalidArgumentException("Expression must either be a string or an array");
     }
     
     public function getSelect()
