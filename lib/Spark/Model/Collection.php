@@ -18,7 +18,7 @@
  * @copyright  Copyright (c) 2010 Christoph Hochstrasser
  * @license    MIT License
  */
-class Spark_Model_Collection implements Iterator, ArrayAccess
+class Spark_Model_Collection implements IteratorAggregate, ArrayAccess, Countable
 {
   const SORT_ASC  = "asc";
   const SORT_DESC = "desc";
@@ -55,6 +55,17 @@ class Spark_Model_Collection implements Iterator, ArrayAccess
     $this->_data = $this->_merge($this->_data, $data);
     return $this;
   }
+
+  public function first()
+  {
+    reset($this->_data);
+    return current($this->_data);
+  }
+  
+  public function last()
+  {
+    return end($this->_data);
+  }
   
   public function sortBy($field, $mode = self::SORT_ASC)
   {
@@ -75,6 +86,16 @@ class Spark_Model_Collection implements Iterator, ArrayAccess
     unset($this->_sortField);
     
     return $this;
+  }
+
+  public function count()
+  {
+    return sizeof($this->_data);
+  }
+  
+  public function getIterator()
+  {
+    return new ArrayIterator($this->_data);
   }
   
   protected function _sortAsc($a, $b)
@@ -134,52 +155,6 @@ class Spark_Model_Collection implements Iterator, ArrayAccess
     unset($this->_data[$offset]);
   }
   
-  /**
-   * current() - Returns the value of the current key as defined in Iterator Interface
-   *
-   * @return mixed
-   */
-  public function current()
-  {
-    return current($this->_data);
-  }
-
-  /**
-   * rewind() - Resets the position in the array as defined in Iterator Interface
-   */
-  public function rewind()
-  {
-    $this->_pos = 0;
-    reset($this->_data);
-  }
-
-  /**
-   * valid() - Checks if the current position has a valid item
-   * 
-   * @return bool
-   */
-  public function valid()
-  {
-    return ($this->_pos < sizeof($this->_data));
-  }
-
-  /**
-   * next() - Moves to the next position within the array
-   */
-  public function next()
-  {
-    $this->_pos++;
-    next($this->_data);
-  }
-
-  /**
-   * key() - Returns the key at the current position
-   * @return mixed
-   */
-  public function key()
-  {
-    return key($this->_data);
-  }
   
   protected function _merge($data1, $data2)
   {
