@@ -1,8 +1,8 @@
 <?php
 
-class Spark_Relation_Sql_Select implements Spark_Relation_Sql_Formatter
+class Spark_Relation_Sql_Select extends Spark_Relation_AbstractVerb
 {
-    public function toSql(Spark_Relation_AbstractVerb $verb)
+    public function direct()
     {
         $attributes = $project->getAttributes();
         

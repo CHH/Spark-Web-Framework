@@ -9,7 +9,25 @@ class Spark_Relation_Operation_Select
     protected $attribute;
     protected $value;
     protected $operator;
+    
+    public function direct($expression, $value = null)
+    {
+        $this->registerPlugin("toSql", "Spark_Relation_Sql_Where");
+        
+        if (is_string($expression)) {
+            list($attribute, $operator) = self::_parseString($expression);
 
+            $this->attribute = $attribute;
+            $this->operator  = $operator;
+            $this->value     = $value;
+            
+        } else if (is_array($expression)) {
+            $this->setSelect($expression);
+        } else {
+            throw new InvalidArgumentException("Expression must either be a string or an array");
+        }
+    }    
+    
     public static function attribute($attribute)
     {
         return new self($attribute);
@@ -58,22 +76,6 @@ class Spark_Relation_Operation_Select
         }
 
         return array($attribute, $operator);
-    }
-    
-    public function direct($expression, $value = null)
-    {
-        if (is_string($expression)) {
-            list($attribute, $operator) = self::_parseString($expression);
-
-            $this->attribute = $attribute;
-            $this->operator  = $operator;
-            $this->value     = $value;
-            
-        } else if (is_array($expression)) {
-            $this->setSelect($expression);
-        } else {
-            throw new InvalidArgumentException("Expression must either be a string or an array");
-        }
     }
     
     public function getSelect()

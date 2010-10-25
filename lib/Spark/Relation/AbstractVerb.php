@@ -9,8 +9,7 @@ abstract class Spark_Relation_AbstractVerb
         "alias"    => "Spark_Relation_Operation_Alias",
         "join"     => "Spark_Relation_Operation_Join",
         "select"   => "Spark_Relation_Operation_Select",
-        "orSelect" => "Spark_Relation_Operation_OrSelect",
-        "toSql"    => "Spark_Relation_ToSql"
+        "orSelect" => "Spark_Relation_Operation_OrSelect"
     );
     
     final public function __construct(Spark_Relation_AbstractVerb $previous = null)
@@ -34,14 +33,16 @@ abstract class Spark_Relation_AbstractVerb
     {
         $nextVerb = $this->operators->getInstance($verb);
         $nextVerb->setPrevious($this);
+        
         if (!$nextVerb instanceof Spark_Relation_AbstractVerb) {
             throw new UnexpectedValueException("Verb is no instance of AbstractVerb");
         }
+        
         if (!is_callable(array($nextVerb, "direct"))) {
             throw new BadMethodCallException("Extension must implement the direct() method");
         }
-        call_user_func_array(array($nextVerb, "direct"), $args);
         
+        call_user_func_array(array($nextVerb, "direct"), $args);
         return $nextVerb;
     }
 

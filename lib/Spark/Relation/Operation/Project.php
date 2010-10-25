@@ -7,10 +7,12 @@ class Spark_Relation_Operation_Project extends Spark_Relation_AbstractVerb
     
     public function direct($relation, Array $attributes = array())
     {
+        $this->registerPlugin("toSql", "Spark_Relation_Sql_Select");
+        
         $this->relation   = $relation;
         $this->attributes = $attributes;
     }
-
+    
     public function setRelation($relation)
     {
         $this->relation = $relation;

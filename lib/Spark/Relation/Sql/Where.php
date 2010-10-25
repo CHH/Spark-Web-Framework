@@ -1,13 +1,13 @@
 <?php
 
-class Spark_Relation_Sql_Where implements Spark_Relation_Sql_Formatter
+class Spark_Relation_Sql_Where extends Spark_Relation_AbstractVerb
 {
     static $count = 0;    
     
-    public function toSql(Spark_Relation_AbstractVerb $verb)
+    public function direct()
     {
-        $value    = $verb->getValue();
-        $operator = $verb->getOperator();
+        $value    = $this->getPrevious()->getValue();
+        $operator = $this->getPrevious()->getOperator();
         
         switch ($operator) {
             case Spark_Relation_Comparable::EQUAL:
