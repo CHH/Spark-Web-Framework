@@ -30,8 +30,13 @@ class Spark_Registry implements Countable, IteratorAggregate
     public function set($key, $value)
     {
         if (!is_string($key) or empty($key)) {
-            throw new InvalidArgumentException("Key must be a string "
-                . gettype($key) . " given");
+            throw new InvalidArgumentException(sprintf(
+                'Key must be a string, %s given',
+                gettype($key)
+            ));
+        }
+        if ($this->has($key)) {
+            throw new InvalidArgumentException(sprintf('Key %s is already set.', $key));
         }
         $this->registry[$key] = $value;
         return $this;

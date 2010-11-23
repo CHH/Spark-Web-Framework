@@ -32,15 +32,42 @@ class Spark_RegistryTest extends PHPUnit_Framework_Testcase
         $this->assertTrue($this->registry->has($key));
         $this->assertEquals($value, $this->registry->get($key));
     }
-
+    
     /** 
      * @dataProvider getTestData
      */
-    public function staticSet($key, $value)
+    /*
+    public function testStaticSet($key, $value)
     {
         Spark_StaticRegistry::set($key, $value);
-
+        
         $this->assertTrue(Spark_StaticRegistry::has($key));
         $this->assertEquals($value, Spark_StaticRegistry::get($key));
+    }*/
+    
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testGetNotExisting()
+    {
+        $this->registry->get("foo");
+    }
+    
+    /**
+     * @expectedException InvalidArgumentException
+     */
+    public function testSetExisting()
+    {
+        $this->registry->set("key1", "foo");
+    }
+    
+    /**
+     * Registry key must be a string
+     * 
+     * @expectedException InvalidArgumentException
+     */
+    public function testInvalidKey()
+    {
+        $this->registry->set(array("foo" => "bar"), "bar");
     }
 }
