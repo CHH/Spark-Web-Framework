@@ -11,12 +11,6 @@
  * @license    MIT License
  */
 
-/**
- * @category   Spark
- * @package    Spark_Factory
- * @copyright  Copyright (c) 2010 Christoph Hochstrasser
- * @license    MIT License
- */
 class Spark_Factory
 {
   /**
